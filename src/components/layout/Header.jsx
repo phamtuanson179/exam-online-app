@@ -257,6 +257,7 @@ function Header({
   handleSidenavColor,
   handleSidenavType,
   handleFixedNavbar,
+  breadcrumbTitle,
 }) {
   const { Title, Text } = Typography;
 
@@ -267,7 +268,6 @@ function Header({
 
   const showDrawer = () => setVisible(true);
   const hideDrawer = () => setVisible(false);
-
   return (
     <>
       <div className='setting-drwer' onClick={showDrawer}>
@@ -277,10 +277,10 @@ function Header({
         <Col span={24} md={6}>
           <Breadcrumb>
             <Breadcrumb.Item>
-              <NavLink to='/'>Pages</NavLink>
+              <NavLink to='/'>Home</NavLink>
             </Breadcrumb.Item>
             <Breadcrumb.Item style={{ textTransform: "capitalize" }}>
-              {name.replace("/", "")}
+              {breadcrumbTitle}
             </Breadcrumb.Item>
           </Breadcrumb>
           <div className='ant-page-header-heading'>
@@ -288,7 +288,7 @@ function Header({
               className='ant-page-header-heading-title'
               style={{ textTransform: "capitalize" }}
             >
-              {subName.replace("/", "")}
+              {breadcrumbTitle}
             </span>
           </div>
         </Col>

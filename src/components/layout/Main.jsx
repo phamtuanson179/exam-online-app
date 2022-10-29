@@ -31,7 +31,7 @@ function Main({ children }) {
   const handleSidenavColor = (color) => setSidenavColor(color);
   const handleFixedNavbar = (type) => setFixed(type);
 
-  let { pathname } = useLocation();
+  let { pathname, breadcrumbTitle } = useLocation();
   pathname = pathname.replace("/", "");
 
   useEffect(() => {
@@ -68,7 +68,7 @@ function Main({ children }) {
           <Sider
             trigger={null}
             width={250}
-            theme="light"
+            theme='light'
             className={`sider-primary ant-layout-sider-primary ${
               sidenavType === "#fff" ? "active-route" : ""
             }`}
@@ -79,14 +79,14 @@ function Main({ children }) {
         </Layout>
       </Drawer>
       <Sider
-        breakpoint="lg"
-        collapsedWidth="0"
+        breakpoint='lg'
+        collapsedWidth='0'
         onCollapse={(collapsed, type) => {
           console.log(collapsed, type);
         }}
         trigger={null}
         width={250}
-        theme="light"
+        theme='light'
         className={`sider-primary ant-layout-sider-primary ${
           sidenavType === "#fff" ? "active-route" : ""
         }`}
@@ -105,6 +105,7 @@ function Main({ children }) {
                 handleSidenavColor={handleSidenavColor}
                 handleSidenavType={handleSidenavType}
                 handleFixedNavbar={handleFixedNavbar}
+                breadcrumbTitle={breadcrumbTitle}
               />
             </AntHeader>
           </Affix>
@@ -117,10 +118,11 @@ function Main({ children }) {
               handleSidenavColor={handleSidenavColor}
               handleSidenavType={handleSidenavType}
               handleFixedNavbar={handleFixedNavbar}
+              breadcrumbTitle={breadcrumbTitle}
             />
           </AntHeader>
         )}
-        <Content className="content-ant">{children}</Content>
+        <Content className='content-ant'>{children}</Content>
         <Footer />
       </Layout>
     </Layout>
