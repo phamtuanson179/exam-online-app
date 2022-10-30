@@ -11,13 +11,17 @@
 */
 import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
+import store from "./redux/store";
 import App from "./App";
 
 ReactDOM.render(
   <BrowserRouter>
     <Suspense fallback={<div>Loading... </div>}>
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     </Suspense>
   </BrowserRouter>,
   document.getElementById("root")

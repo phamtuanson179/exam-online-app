@@ -1,0 +1,11 @@
+.ant-modal {
+  .ant-modal-content {
+    .ant-modal-close-x {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    border-radius: 0.75rem;
+    overflow: hidden;
+  }
+}

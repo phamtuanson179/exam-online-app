@@ -1,6 +1,8 @@
 import "antd/dist/antd.css";
 import { Redirect, Route, Switch } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.css";
 import "./styles/main.scss";
+import "./styles/customs/style.scss";
 import "./styles/responsive.scss";
 import Main from "./components/layout/Main";
 import routes from "./routes";
