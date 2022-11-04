@@ -1,6 +1,6 @@
 import { lazy } from "react";
 
-const UserManager = lazy(() => import("./pages/user-manager/index.js"));
+const User = lazy(() => import("./pages/user"));
 const Dashboard = lazy(() => import("./pages/Home.jsx"));
 const SignIn = lazy(() => import("./pages/SignIn.jsx"));
 const SignUp = lazy(() => import("./pages/SignUp.jsx"));
@@ -13,8 +13,8 @@ const routes = [
     isInMain: true,
   },
   {
-    path: "/user-manager",
-    component: () => <UserManager />,
+    path: "/user",
+    component: () => <User />,
     isInMain: true,
   },
   {

@@ -1,3 +1,3 @@
-import UploadImage from "./upload-image";
+import UploadImage from "./uploadImage";
 
 export default UploadImage;

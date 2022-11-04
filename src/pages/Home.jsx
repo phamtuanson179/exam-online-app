@@ -344,9 +344,9 @@ function Home() {
     <>
       <div className='layout-content'>
         <Row className='rowgap-vbox' gutter={[24, 0]}>
-          {count.map((c, index) => (
+          {count.map((c, key) => (
             <Col
-              key={index}
+              key={key}
               xs={24}
               sm={24}
               md={12}
@@ -417,8 +417,8 @@ function Home() {
                     </tr>
                   </thead>
                   <tbody>
-                    {list.map((d, index) => (
-                      <tr key={index}>
+                    {list.map((d, key) => (
+                      <tr key={key}>
                         <td>
                           <h6>
                             <img
@@ -469,8 +469,8 @@ function Home() {
                   className='timelinelist'
                   reverse={reverse}
                 >
-                  {timelineList.map((t, index) => (
-                    <Timeline.Item color={t.color} key={index}>
+                  {timelineList.map((t, key) => (
+                    <Timeline.Item color={t.color} key={key}>
                       <Title level={5}>{t.title}</Title>
                       <Text>{t.time}</Text>
                     </Timeline.Item>

@@ -460,8 +460,8 @@ function Billing() {
             bodyStyle={{ paddingTop: "0" }}
           >
             <Row gutter={[24, 24]}>
-              {information.map((i, index) => (
-                <Col span={24} key={index}>
+              {information.map((i, key) => (
+                <Col span={24} key={key}>
                   <Card className='card-billing-info' bordered='false'>
                     <div className='col-info'>
                       <Descriptions title='Oliver Liam'>

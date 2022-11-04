@@ -57,11 +57,11 @@ function Sidenav({ color }) {
           </NavLink>
         </Menu.Item>
         <Menu.Item key='2'>
-          <NavLink to='/user-manager'>
+          <NavLink to='/user'>
             <span
               className='icon'
               style={{
-                background: page === "user-manager" ? color : "",
+                background: page === "user" ? color : "",
               }}
             >
               <MenuOutlined />

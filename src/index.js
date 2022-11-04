@@ -15,10 +15,23 @@ import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import store from "./redux/store";
 import App from "./App";
+import { Space, Spin } from "antd";
 
 ReactDOM.render(
   <BrowserRouter>
-    <Suspense fallback={<div>Loading... </div>}>
+    <Suspense
+      fallback={
+        <Space
+          style={{
+            width: "100vw",
+            height: "100vh",
+            justifyContent: "center",
+          }}
+        >
+          <Spin size='large' />
+        </Space>
+      }
+    >
       <Provider store={store}>
         <App />
       </Provider>

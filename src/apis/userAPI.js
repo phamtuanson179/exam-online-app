@@ -1,9 +1,19 @@
 import axiosClient from "./baseAPI";
 
 const userAPI = {
+  url: "/user",
   getAll: () => {
-    const url = "/user";
-    return axiosClient.get(url);
+    return axiosClient.get(userAPI.url);
+  },
+  create: (body) => {
+    return axiosClient.post(userAPI.url, body);
+  },
+  update: (params, data) => {
+    return axiosClient.put(userAPI.url, data, { params });
+  },
+  delete: (params) => {
+    console.log({ params });
+    return axiosClient.delete(userAPI.url, { params });
   },
 };
 
