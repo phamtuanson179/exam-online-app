@@ -1,36 +1,22 @@
-import { EditOutlined } from "@ant-design/icons";
-import { Button, DatePicker, Form, Input, Modal, Select } from "antd";
-import moment from "moment/moment";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { Button, Modal, Form, Input, DatePicker, Select } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import React, { useState, useEffect } from "react";
 import UploadImage from "../../../../components/upload-image";
-import { PLACEHOLDER } from "../../../../constants/configs";
 import { ROLE } from "../../../../constants/types";
-import { listUsersSelector } from "../../../../redux/selectors";
-import { updateUserThunk } from "pages/user/redux/userThunks";
+import { PLACEHOLDER } from "../../../../constants/configs";
+import { createUserThunk } from "pages/user/redux/userThunks";
+import { useDispatch, useSelector } from "react-redux";
+import { listUsersSelector } from "redux/selectors";
 
 const { Option } = Select;
 
-const UserUpdate = ({ userElement }) => {
+const QuestionCreate = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [avatar, setAvatar] = useState("");
   const [userForm] = Form.useForm();
   const dispatch = useDispatch();
   const user = useSelector(listUsersSelector);
   const listRoles = Object.keys(ROLE);
-
-  useEffect(() => {
-    console.log(userElement._id);
-    userForm.setFieldsValue({
-      fullname: userElement?.fullname,
-      email: userElement?.email,
-      username: userElement?.username,
-      role: userElement?.role,
-      address: userElement?.address,
-      dob: moment(userElement?.dob),
-    });
-    setAvatar(userElement?.avatar);
-  }, []);
 
   useEffect(() => {
     if (!user.loading) {
@@ -48,30 +34,30 @@ const UserUpdate = ({ userElement }) => {
 
   const onSubmit = (value) => {
     value.avatar = avatar;
-    value.dob = value.dob.valueOf();
-    dispatch(updateUserThunk({ params: { id: userElement._id }, body: value }));
+    value.dob = value.dob?.valueOf();
+    dispatch(createUserThunk(value));
   };
 
   return (
     <>
-      <Button type='warning' className='btn btn-warning' onClick={showModal}>
-        <EditOutlined />
+      <Button type='primary' className='btn btn-success' onClick={showModal}>
+        <PlusOutlined />
       </Button>
       <Modal
-        title='Basic Modal'
+        getContainer={false}
+        title='Thêm tài khoản'
         visible={isModalOpen}
         onCancel={handleCancel}
-        getContainer={false}
         okButtonProps={{
           htmlType: "submit",
-          form: "userUpdateForm",
+          form: "userCreateForm",
         }}
       >
         <Form
           layout={"vertical"}
           form={userForm}
           onFinish={onSubmit}
-          id='userUpdateForm'
+          id='userCreateForm'
         >
           <Form.Item>
             <UploadImage
@@ -149,4 +135,4 @@ const UserUpdate = ({ userElement }) => {
     </>
   );
 };
-export default UserUpdate;
+export default QuestionCreate;

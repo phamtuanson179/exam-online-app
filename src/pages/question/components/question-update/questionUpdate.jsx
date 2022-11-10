@@ -11,7 +11,7 @@ import { updateUserThunk } from "pages/user/redux/userThunks";
 
 const { Option } = Select;
 
-const UserUpdate = ({ userElement }) => {
+const QuestionUpdate = ({ userElement }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [avatar, setAvatar] = useState("");
   const [userForm] = Form.useForm();
@@ -149,4 +149,4 @@ const UserUpdate = ({ userElement }) => {
     </>
   );
 };
-export default UserUpdate;
+export default QuestionUpdate;

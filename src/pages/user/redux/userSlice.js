@@ -1,5 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createUser, deleteUser, getAllUser, updateUser } from "./userThunks";
+import {
+  createUserThunk,
+  deleteUserThunk,
+  getAllUserThunk,
+  updateUserThunk,
+} from "./userThunks";
 
 export const userSlice = createSlice({
   name: "user",
@@ -12,10 +17,10 @@ export const userSlice = createSlice({
     // pushUserToListUsers: (state, action) => {
     //   state.listUsers.push(action.payload);
     // },
-    // updateUserToListUsers: (state, action) => {
+    // updateUserThunkToListUsers: (state, action) => {
     //   const updatedUser = action.payload;
     //   const indexElement = state.listUsers.findIndex(
-    //     (user) => user.id == updateUser.id
+    //     (user) => user.id == updateUserThunk.id
     //   );
     //   if (indexElement) {
     //     state.listUsers[indexElement] = updatedUser;
@@ -23,48 +28,49 @@ export const userSlice = createSlice({
     // },
   },
   extraReducers: {
-    [getAllUser.pending]: (state, action) => {
+    [getAllUserThunk.pending]: (state, action) => {
       state.loading = true;
     },
-    [getAllUser.fulfilled]: (state, action) => {
+    [getAllUserThunk.fulfilled]: (state, action) => {
       state.listUsers = action.payload.data;
       state.loading = false;
     },
-    [getAllUser.rejected]: (state, action) => {
+    [getAllUserThunk.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.error;
     },
-    [createUser.pending]: (state, action) => {
+    [createUserThunk.pending]: (state, action) => {
       state.loading = true;
     },
-    [createUser.fulfilled]: (state, action) => {
+    [createUserThunk.fulfilled]: (state, action) => {
       state.loading = false;
     },
-    [createUser.rejected]: (state, action) => {
+    [createUserThunk.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.error;
     },
-    [updateUser.pending]: (state, action) => {
+    [updateUserThunk.pending]: (state, action) => {
       state.loading = true;
     },
-    [updateUser.fulfilled]: (state, action) => {
+    [updateUserThunk.fulfilled]: (state, action) => {
       state.loading = false;
     },
-    [updateUser.rejected]: (state, action) => {
+    [updateUserThunk.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.error;
     },
-    [deleteUser.pending]: (state, action) => {
+    [deleteUserThunk.pending]: (state, action) => {
       state.loading = true;
     },
-    [deleteUser.fulfilled]: (state, action) => {
+    [deleteUserThunk.fulfilled]: (state, action) => {
       state.loading = false;
     },
-    [deleteUser.rejected]: (state, action) => {
+    [deleteUserThunk.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.error;
     },
   },
 });
 
-export const { pushUserToListUsers, updateUserToListUsers } = userSlice.actions;
+export const { pushUserToListUsers, updateUserThunkToListUsers } =
+  userSlice.actions;

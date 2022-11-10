@@ -21,6 +21,7 @@ function App() {
       <Route path={route.path} component={route.component} key={key} />
     ));
   };
+
   return (
     <div className='App'>
       <Switch>

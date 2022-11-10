@@ -4,9 +4,9 @@ import React, { useState, useEffect } from "react";
 import UploadImage from "../../../../components/upload-image";
 import { ROLE } from "../../../../constants/types";
 import { PLACEHOLDER } from "../../../../constants/configs";
-import { createUser } from "../../userThunks";
+import { createUserThunk } from "pages/user/redux/userThunks";
 import { useDispatch, useSelector } from "react-redux";
-import { listUsersSelector } from "../../../../redux/selectors";
+import { listUsersSelector } from "redux/selectors";
 
 const { Option } = Select;
 
@@ -35,7 +35,7 @@ const UserCreate = () => {
   const onSubmit = (value) => {
     value.avatar = avatar;
     value.dob = value.dob?.valueOf();
-    dispatch(createUser(value));
+    dispatch(createUserThunk(value));
   };
 
   return (
@@ -45,7 +45,7 @@ const UserCreate = () => {
       </Button>
       <Modal
         getContainer={false}
-        title='Basic Modal'
+        title='Thêm tài khoản'
         visible={isModalOpen}
         onCancel={handleCancel}
         okButtonProps={{

@@ -2,17 +2,17 @@ import { Card, Space, Spin, Table } from "antd";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { listUsersSelector } from "../../../../redux/selectors";
-import { convertDate } from "../../../../utils/functions";
-import { getAllUser } from "../../userThunks";
-import UserCreate from "../user-create";
+import { convertDate } from "../../../../utils/time";
+import { getAllUserThunk } from "pages/user/redux/userThunks";
 import UserDelete from "../user-delete/userDelete";
 import UserUpdate from "../user-update/userUpdate";
+import UserCreate from "../user-create/userCreate";
 
 const UserView = () => {
   const user = useSelector(listUsersSelector);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getAllUser());
+    dispatch(getAllUserThunk());
   }, []);
 
   return (

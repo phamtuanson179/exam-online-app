@@ -69,6 +69,32 @@ function Sidenav({ color }) {
             <span className='label'>Quản lý tài khoản</span>
           </NavLink>
         </Menu.Item>
+        <Menu.Item key='3'>
+          <NavLink to='/subject'>
+            <span
+              className='icon'
+              style={{
+                background: page === "subject" ? color : "",
+              }}
+            >
+              <MenuOutlined />
+            </span>
+            <span className='label'>Quản lý môn học</span>
+          </NavLink>
+        </Menu.Item>
+        <Menu.Item key='4'>
+          <NavLink to='/question'>
+            <span
+              className='icon'
+              style={{
+                background: page === "question" ? color : "",
+              }}
+            >
+              <MenuOutlined />
+            </span>
+            <span className='label'>Quản lý câu hỏi</span>
+          </NavLink>
+        </Menu.Item>
         {/* <Menu.Item key='2'>
           <NavLink to='/tables'>
             <span

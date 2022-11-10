@@ -3,17 +3,18 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { deleteUserThunk } from "pages/user/redux/userThunks";
 import { DeleteOutlined } from "@ant-design/icons";
+import { deleteSubjectThunk } from "pages/subject/redux/subjectThunks";
 
-const UserDelete = ({ userElement }) => {
+const SubjectDelete = ({ subjectElement }) => {
   const dispatch = useDispatch();
-  const confirmDeleteUser = () => {
-    dispatch(deleteUserThunk({ id: userElement._id }));
+  const confirmDeleteSubject = () => {
+    dispatch(deleteSubjectThunk({ id: subjectElement._id }));
   };
 
   return (
     <Popconfirm
-      title='Bạn có muốn xóa người dùng này không?'
-      onConfirm={confirmDeleteUser}
+      title='Bạn có muốn xóa môn học này không?'
+      onConfirm={confirmDeleteSubject}
       okText='Xác nhận'
       cancelText='Hủy'
     >
@@ -23,4 +24,4 @@ const UserDelete = ({ userElement }) => {
     </Popconfirm>
   );
 };
-export default UserDelete;
+export default SubjectDelete;

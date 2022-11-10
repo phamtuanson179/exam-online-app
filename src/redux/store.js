@@ -1,9 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { userSlice } from "../pages/user/userSlice";
+import { questionSlice } from "pages/question/redux/questionSlice";
+import { subjectSlice } from "pages/subject/redux/subjectSlice";
+import { userSlice } from "pages/user/redux/userSlice";
 import thunk from "redux-thunk";
 const store = configureStore({
   reducer: {
-    userManager: userSlice.reducer,
+    user: userSlice.reducer,
+    subject: subjectSlice.reducer,
+    question: questionSlice.reducer,
   },
   middleware: [thunk],
 });

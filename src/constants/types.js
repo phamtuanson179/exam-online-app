@@ -21,10 +21,16 @@ export const EXAM_TYPE = {
 };
 
 export const QUESTION_TYPE = {
-  ONE: "ONE",
-  MANY: "MANY",
-  FILL_WITH_NUMBER: "FILL_WITH_NUMBER",
-  TRUE_FALSE: "TRUE_FALSE",
+  ONE: { code: "ONE", meaning: "Câu hỏi có một câu trả lời đúng" },
+  MANY: { code: "MANY", meaning: "Câu hỏi có nhiều câu trả lời đúng" },
+  FILL_WITH_NUMBER: {
+    code: "FILL_WITH_NUMBER",
+    meaning: "Câu hỏi điền đáp án đúng",
+  },
+  TRUE_FALSE: {
+    code: "TRUE_FALSE",
+    meaning: "Câu hỏi đúng sai",
+  },
 };
 
 export const RESULT_TYPE = {

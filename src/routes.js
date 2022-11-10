@@ -1,6 +1,8 @@
 import { lazy } from "react";
 
-const User = lazy(() => import("./pages/user"));
+const User = lazy(() => import("pages/user"));
+const Subject = lazy(() => import("pages/subject"));
+const Question = lazy(() => import("pages/question"));
 const Dashboard = lazy(() => import("./pages/Home.jsx"));
 const SignIn = lazy(() => import("./pages/SignIn.jsx"));
 const SignUp = lazy(() => import("./pages/SignUp.jsx"));
@@ -15,6 +17,16 @@ const routes = [
   {
     path: "/user",
     component: () => <User />,
+    isInMain: true,
+  },
+  {
+    path: "/subject",
+    component: () => <Subject />,
+    isInMain: true,
+  },
+  {
+    path: "/question",
+    component: () => <Question />,
     isInMain: true,
   },
   {
