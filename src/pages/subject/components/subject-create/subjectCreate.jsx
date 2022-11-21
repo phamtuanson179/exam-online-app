@@ -17,7 +17,6 @@ const SubjectCreate = () => {
   const [subjectForm] = Form.useForm();
   const dispatch = useDispatch();
   const user = useSelector(listUsersSelector);
-  const listRoles = Object.keys(ROLE);
 
   useEffect(() => {
     if (!user.loading) {

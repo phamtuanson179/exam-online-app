@@ -5,9 +5,9 @@ import subjectAPI from "apis/subjectAPI";
 import { QUESTION_TYPE } from "constants/types";
 import { useEffect, useState } from "react";
 import { convertToFilterString } from "utils/filter";
+import QuestionCreate from "../question-create/questionCreate";
 
 const QuestionView = () => {
-  const [filter, setFilter] = useState("");
   const [listSubjects, setListSubjects] = useState([]);
   const [listQuestions, setListQuestions] = useState([]);
   const [subjectIdFilter, setQuestionIdFilter] = useState("");
@@ -106,6 +106,7 @@ const QuestionView = () => {
               value: QUESTION_TYPE[key].code,
             }))}
           />
+          <QuestionCreate listSubjects={listSubjects} />
         </div>
       </>
     );

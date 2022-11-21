@@ -1,28 +1,20 @@
-import { Button, Modal, Form, Input, DatePicker, Select } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import React, { useState, useEffect } from "react";
+import { Button, Card, Form, Input, Modal, Select } from "antd";
+import { useEffect, useState } from "react";
 import UploadImage from "../../../../components/upload-image";
-import { ROLE } from "../../../../constants/types";
 import { PLACEHOLDER } from "../../../../constants/configs";
-import { createUserThunk } from "pages/user/redux/userThunks";
-import { useDispatch, useSelector } from "react-redux";
-import { listUsersSelector } from "redux/selectors";
+import { QUESTION_TYPE, ROLE } from "../../../../constants/types";
 
 const { Option } = Select;
 
-const QuestionCreate = () => {
+const QuestionCreate = ({ listSubjects }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [avatar, setAvatar] = useState("");
-  const [userForm] = Form.useForm();
-  const dispatch = useDispatch();
-  const user = useSelector(listUsersSelector);
-  const listRoles = Object.keys(ROLE);
+  const [questionForm] = Form.useForm();
+  const listQuestionTypeKeys = Object.keys(QUESTION_TYPE);
 
   useEffect(() => {
-    if (!user.loading) {
-      setIsModalOpen(false);
-    }
-  }, [user]);
+
+  }, []);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -33,11 +25,77 @@ const QuestionCreate = () => {
   };
 
   const onSubmit = (value) => {
-    value.avatar = avatar;
-    value.dob = value.dob?.valueOf();
-    dispatch(createUserThunk(value));
   };
 
+  const renderQuestionAnswers = () => {
+    console.log(questionForm.getFieldValue("type"));
+    if (questionForm.getFieldValue("type") == QUESTION_TYPE.ONE.code) {
+      return <>
+        <Form.Item
+          label='Nội dung câu hỏi'
+          name='fullname'
+          rules={[
+            {
+              required: true,
+              message: "Trường này bắt buộc!",
+            },
+          ]}
+        >
+          <Input placeholder={PLACEHOLDER.QUESTION_CONTENT} />
+        </Form.Item>
+        <Form.Item
+          label=''
+          labelCol={{ span: 2 }}
+          wrapperCol={{ span: 12 }}
+          name='fullname'
+          rules={[
+            {
+              required: true,
+              message: "Trường này bắt buộc!",
+            },
+          ]}
+        >
+          <Input placeholder={PLACEHOLDER.QUESTION_CONTENT} />
+        </Form.Item>
+        <Form.Item
+          label='Câu trả lời thứ hai'
+          name='fullname'
+          rules={[
+            {
+              required: true,
+              message: "Trường này bắt buộc!",
+            },
+          ]}
+        >
+          <Input placeholder={PLACEHOLDER.QUESTION_CONTENT} />
+        </Form.Item>
+        <Form.Item
+          label='Câu trả lời thứ ba'
+          name='fullname'
+          rules={[
+            {
+              required: true,
+              message: "Trường này bắt buộc!",
+            },
+          ]}
+        >
+          <Input placeholder={PLACEHOLDER.QUESTION_CONTENT} />
+        </Form.Item>
+        <Form.Item
+          label='Câu trả lời thứ tư'
+          name='fullname'
+          rules={[
+            {
+              required: true,
+              message: "Trường này bắt buộc!",
+            },
+          ]}
+        >
+          <Input placeholder={PLACEHOLDER.QUESTION_CONTENT} />
+        </Form.Item>
+      </>
+    } else return <></>
+  }
   return (
     <>
       <Button type='primary' className='btn btn-success' onClick={showModal}>
@@ -45,30 +103,23 @@ const QuestionCreate = () => {
       </Button>
       <Modal
         getContainer={false}
-        title='Thêm tài khoản'
+        title='Thêm câu hỏi'
         visible={isModalOpen}
         onCancel={handleCancel}
         okButtonProps={{
           htmlType: "submit",
-          form: "userCreateForm",
+          form: "questionCreateForm",
         }}
       >
         <Form
           layout={"vertical"}
-          form={userForm}
+          form={questionForm}
           onFinish={onSubmit}
-          id='userCreateForm'
+          id='questionCreateForm'
         >
-          <Form.Item>
-            <UploadImage
-              image={avatar}
-              setImage={setAvatar}
-              className='text-center'
-            />
-          </Form.Item>
           <Form.Item
-            label='Họ tên'
-            name='fullname'
+            label='Môn học'
+            name='subjectId'
             rules={[
               {
                 required: true,
@@ -76,60 +127,47 @@ const QuestionCreate = () => {
               },
             ]}
           >
-            <Input placeholder={PLACEHOLDER.NAME} />
-          </Form.Item>
-          <Form.Item
-            label='Email'
-            name='email'
-            rules={[
-              {
-                required: true,
-                message: "Trường này bắt buộc!",
-              },
-              {
-                type: "email",
-                message: "Chưa đúng định dạng!",
-              },
-            ]}
-          >
-            <Input placeholder={PLACEHOLDER.EMAIL} />
-          </Form.Item>
-          <Form.Item
-            label='Tên tài khoản'
-            name='username'
-            rules={[
-              {
-                required: true,
-                message: "Trường này bắt buộc!",
-              },
-            ]}
-          >
-            <Input placeholder={PLACEHOLDER.USERNAME} />
-          </Form.Item>
-          <Form.Item
-            label='Vai trò'
-            name='role'
-            rules={[
-              {
-                required: true,
-                message: "Trường này bắt buộc!",
-              },
-            ]}
-          >
-            <Select placeholder={PLACEHOLDER.ROLE}>
-              {listRoles.map((role, key) => (
-                <Option key={key} value={role}>
-                  {ROLE[role].meaning}
+            <Select placeholder={PLACEHOLDER.SUBJECT}>
+              {listSubjects.map((subject, key) => (
+                <Option key={key} value={subject._id}>
+                  {subject?.name}
                 </Option>
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label='Địa chỉ' name='address'>
-            <Input placeholder={PLACEHOLDER.ADDRESS} />
+          <Form.Item
+            label='Loại câu hỏi'
+            name='type'
+            rules={[
+              {
+                required: true,
+                message: "Trường này bắt buộc!",
+              },
+            ]}
+          >
+            <Select placeholder={PLACEHOLDER.QUESTION_TYPE}>
+              {listQuestionTypeKeys.map((questionType, key) => (
+                <Option key={key} value={questionType}>
+                  {QUESTION_TYPE[questionType].meaning}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
-          <Form.Item label='Ngày sinh' name='dob'>
-            <DatePicker placeholder={PLACEHOLDER.DOB} />
-          </Form.Item>
+          <Card style={{ display: questionForm.getFieldValue('type') ? 'block' : 'none' }}>
+            <Form.Item
+              label='Nội dung câu hỏi'
+              name='fullname'
+              rules={[
+                {
+                  required: true,
+                  message: "Trường này bắt buộc!",
+                },
+              ]}
+            >
+              <Input placeholder={PLACEHOLDER.QUESTION_CONTENT} />
+            </Form.Item>
+
+          </Card>
         </Form>
       </Modal>
     </>
