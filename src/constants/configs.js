@@ -10,7 +10,8 @@ export const PLACEHOLDER = {
   ADDRESS: "Điền địa chỉ của bạn",
   QUESTION_TYPE: 'Chọn một loại câu hỏi',
   SUBJECT: "Chọn môn học",
-  QUESTION_CONTENT: "Điền nội dung câu hỏi"
+  QUESTION_CONTENT: "Điền nội dung câu hỏi",
+  CORRECT_ANSWERS: "Chọn câu trả lời đúng"
 };
 
 // export const RENDER_QUESTION = (questionType, onChange) => {

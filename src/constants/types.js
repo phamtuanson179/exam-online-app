@@ -23,8 +23,8 @@ export const EXAM_TYPE = {
 export const QUESTION_TYPE = {
   ONE: { code: "ONE", meaning: "Câu hỏi có một câu trả lời đúng" },
   MANY: { code: "MANY", meaning: "Câu hỏi có nhiều câu trả lời đúng" },
-  FILL_WITH_NUMBER: {
-    code: "FILL_WITH_NUMBER",
+  FILL: {
+    code: "FILL",
     meaning: "Câu hỏi điền đáp án đúng",
   },
   TRUE_FALSE: {

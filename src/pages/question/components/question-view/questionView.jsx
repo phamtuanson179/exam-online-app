@@ -13,13 +13,17 @@ const QuestionView = () => {
   const [subjectIdFilter, setQuestionIdFilter] = useState("");
   const [questionTypeFilter, setQuestionTypeFilter] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-
   const listQuestionTypeKeys = Object.keys(QUESTION_TYPE);
+  const [isRefreshData, setIsRefreshData] = useState(false)
 
   useEffect(() => {
     getAllSubjects();
-    getAllQuestions();
   }, []);
+
+  useEffect(() => {
+    if (isRefreshData)
+      getAllQuestions();
+  }, [isRefreshData])
 
   useEffect(() => {
     getAllQuestions();
@@ -106,7 +110,7 @@ const QuestionView = () => {
               value: QUESTION_TYPE[key].code,
             }))}
           />
-          <QuestionCreate listSubjects={listSubjects} />
+          <QuestionCreate listSubjects={listSubjects} setIsRefreshData={setIsRefreshData} />
         </div>
       </>
     );
@@ -119,7 +123,6 @@ const QuestionView = () => {
           <Table
             columns={columns}
             dataSource={listQuestions}
-            key=''
             expandable={{
               expandedRowRender: (record) => (
                 <Table

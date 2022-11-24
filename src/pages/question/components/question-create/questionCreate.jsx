@@ -1,16 +1,18 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Card, Form, Input, Modal, Select } from "antd";
+import { Button, Card, Form, Modal, Select } from "antd";
+import questionAPI from "apis/questionAPI";
 import { useEffect, useState } from "react";
-import UploadImage from "../../../../components/upload-image";
+import { renderQuestionFillCorrectAnswer, renderQuestionManyCorrectAnswer, renderQuestionOneCorrectAnswer, renderQuestionTrueFalse } from "utils/renderAnswer";
 import { PLACEHOLDER } from "../../../../constants/configs";
-import { QUESTION_TYPE, ROLE } from "../../../../constants/types";
+import { QUESTION_TYPE } from "../../../../constants/types";
 
 const { Option } = Select;
 
-const QuestionCreate = ({ listSubjects }) => {
+const QuestionCreate = ({ listSubjects, setIsRefreshData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [questionForm] = Form.useForm();
   const listQuestionTypeKeys = Object.keys(QUESTION_TYPE);
+  const [questionType, setQuestionType] = useState('')
 
   useEffect(() => {
 
@@ -24,78 +26,75 @@ const QuestionCreate = ({ listSubjects }) => {
     setIsModalOpen(false);
   };
 
-  const onSubmit = (value) => {
+  const onChangeQuestionType = (value) => {
+    setQuestionType(value)
+    const subjectId = questionForm.getFieldValue('subjectId')
+    questionForm.resetFields();
+    questionForm.setFieldsValue({ 'subjectId': subjectId, 'type': value })
+  }
+
+  const onSubmit = async (value) => {
+    console.log({ value });
+    let body
+    if (questionType == QUESTION_TYPE.ONE.code) {
+      body = {
+        subjectId: value?.subjectId,
+        content: value?.content,
+        type: value?.type,
+        listAnswers: [value?.[1], value?.[2], value?.[3], value?.[4]],
+        listCorrectAnswers: [value?.[value?.listCorrectAnswers]],
+      }
+    }
+    else if (questionType == QUESTION_TYPE.MANY.code) {
+      body = {
+        subjectId: value?.subjectId,
+        content: value?.content,
+        type: value?.type,
+        listAnswers: [value?.[1], value?.[2], value?.[3], value?.[4]],
+        listCorrectAnswers: value?.listCorrectAnswers.map(index => value[index]),
+      }
+    }
+    else if (questionType == QUESTION_TYPE.TRUE_FALSE.code) {
+      body = {
+        subjectId: value?.subjectId,
+        content: value?.content,
+        type: value?.type,
+        listAnswers: ["đúng", "sai"],
+        listCorrectAnswers: [value?.listCorrectAnswers],
+      }
+    }
+    else if (questionType == QUESTION_TYPE.FILL.code) {
+      body = {
+        subjectId: value?.subjectId,
+        content: value?.content,
+        type: value?.type,
+        listAnswers: [],
+        listCorrectAnswers: [value?.listCorrectAnswers],
+      }
+    }
+    console.log({ body });
+    await questionAPI.create(body).then(res => {
+      console.log({ res });
+      setQuestionType('')
+      questionForm.resetFields()
+      setIsRefreshData(true)
+      setIsModalOpen(false)
+    })
+
   };
 
   const renderQuestionAnswers = () => {
-    console.log(questionForm.getFieldValue("type"));
-    if (questionForm.getFieldValue("type") == QUESTION_TYPE.ONE.code) {
-      return <>
-        <Form.Item
-          label='Nội dung câu hỏi'
-          name='fullname'
-          rules={[
-            {
-              required: true,
-              message: "Trường này bắt buộc!",
-            },
-          ]}
-        >
-          <Input placeholder={PLACEHOLDER.QUESTION_CONTENT} />
-        </Form.Item>
-        <Form.Item
-          label=''
-          labelCol={{ span: 2 }}
-          wrapperCol={{ span: 12 }}
-          name='fullname'
-          rules={[
-            {
-              required: true,
-              message: "Trường này bắt buộc!",
-            },
-          ]}
-        >
-          <Input placeholder={PLACEHOLDER.QUESTION_CONTENT} />
-        </Form.Item>
-        <Form.Item
-          label='Câu trả lời thứ hai'
-          name='fullname'
-          rules={[
-            {
-              required: true,
-              message: "Trường này bắt buộc!",
-            },
-          ]}
-        >
-          <Input placeholder={PLACEHOLDER.QUESTION_CONTENT} />
-        </Form.Item>
-        <Form.Item
-          label='Câu trả lời thứ ba'
-          name='fullname'
-          rules={[
-            {
-              required: true,
-              message: "Trường này bắt buộc!",
-            },
-          ]}
-        >
-          <Input placeholder={PLACEHOLDER.QUESTION_CONTENT} />
-        </Form.Item>
-        <Form.Item
-          label='Câu trả lời thứ tư'
-          name='fullname'
-          rules={[
-            {
-              required: true,
-              message: "Trường này bắt buộc!",
-            },
-          ]}
-        >
-          <Input placeholder={PLACEHOLDER.QUESTION_CONTENT} />
-        </Form.Item>
-      </>
-    } else return <></>
+    if (questionType == QUESTION_TYPE.ONE.code) {
+      return renderQuestionOneCorrectAnswer()
+    } else if (questionType == QUESTION_TYPE.TRUE_FALSE.code) {
+      return renderQuestionTrueFalse()
+    } else if (questionType == QUESTION_TYPE.MANY.code) {
+      return renderQuestionManyCorrectAnswer()
+    } else if (questionType == QUESTION_TYPE.FILL.code) {
+      return renderQuestionFillCorrectAnswer()
+    }
   }
+
   return (
     <>
       <Button type='primary' className='btn btn-success' onClick={showModal}>
@@ -112,7 +111,6 @@ const QuestionCreate = ({ listSubjects }) => {
         }}
       >
         <Form
-          layout={"vertical"}
           form={questionForm}
           onFinish={onSubmit}
           id='questionCreateForm'
@@ -145,7 +143,7 @@ const QuestionCreate = ({ listSubjects }) => {
               },
             ]}
           >
-            <Select placeholder={PLACEHOLDER.QUESTION_TYPE}>
+            <Select placeholder={PLACEHOLDER.QUESTION_TYPE} onChange={onChangeQuestionType}>
               {listQuestionTypeKeys.map((questionType, key) => (
                 <Option key={key} value={questionType}>
                   {QUESTION_TYPE[questionType].meaning}
@@ -153,20 +151,8 @@ const QuestionCreate = ({ listSubjects }) => {
               ))}
             </Select>
           </Form.Item>
-          <Card style={{ display: questionForm.getFieldValue('type') ? 'block' : 'none' }}>
-            <Form.Item
-              label='Nội dung câu hỏi'
-              name='fullname'
-              rules={[
-                {
-                  required: true,
-                  message: "Trường này bắt buộc!",
-                },
-              ]}
-            >
-              <Input placeholder={PLACEHOLDER.QUESTION_CONTENT} />
-            </Form.Item>
-
+          <Card style={{ display: questionType ? 'block' : 'none' }}>
+            {questionType ? renderQuestionAnswers() : null}
           </Card>
         </Form>
       </Modal>
