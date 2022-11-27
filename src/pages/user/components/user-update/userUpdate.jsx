@@ -20,7 +20,6 @@ const UserUpdate = ({ userElement }) => {
   const listRoles = Object.keys(ROLE);
 
   useEffect(() => {
-    console.log(userElement._id);
     userForm.setFieldsValue({
       fullname: userElement?.fullname,
       email: userElement?.email,

@@ -1,52 +1,53 @@
 import { CheckCircleOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { Card, Select, Space, Table } from "antd";
+import examAPI from "apis/examAPI";
 import questionAPI from "apis/questionAPI";
 import subjectAPI from "apis/subjectAPI";
 import { QUESTION_TYPE } from "constants/types";
 import { useEffect, useState } from "react";
 import { convertToFilterString } from "utils/filter";
-import QuestionCreate from "../question-create/questionCreate";
-import QuestionDelete from "../question-delete/questionDelete";
-import QuestionUpdate from "../question-update/questionUpdate";
+import ExamCreate from "../exam-create/examCreate";
+import ExamDelete from "../exam-delete/examDelete";
+import ExamUpdate from "../exam-update/examUpdate";
 
-const QuestionView = () => {
+const ExamView = () => {
   const [listSubjects, setListSubjects] = useState([]);
   const [listQuestions, setListQuestions] = useState([]);
+  const [listExams, setListExams] = useState([]);
   const [subjectIdFilter, setQuestionIdFilter] = useState("");
-  const [questionTypeFilter, setQuestionTypeFilter] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const listQuestionTypeKeys = Object.keys(QUESTION_TYPE);
   const [isRefreshData, setIsRefreshData] = useState(false);
 
   const columns = [
     {
-      title: "Nội dung",
-      dataIndex: "content",
-      key: "content",
+      title: "Tên",
+      dataIndex: "name",
+      key: "name",
     },
     {
-      title: "Câu trả lời đúng",
-      render: (record) => record.listCorrectAnswers.join(","),
-      key: "listCorrectAnswers",
+      title: "Số câu hỏi",
+      dataIndex: "amountQuestion",
+      key: "amountQuestion",
     },
     {
-      title: "Loại câu hỏi",
-      render: (record) => QUESTION_TYPE[record.type].meaning,
-      key: "type",
+      title: "Thời gian làm bài",
+      dataIndex: "time",
+      key: "time",
     },
     {
       title: "",
       key: "action",
       render: (record) => (
         <Space size='middle' key={record}>
-          <QuestionUpdate
-            questionElement={record}
+          <ExamUpdate
+            examElement={record}
             listSubjects={listSubjects}
             setIsRefreshData={setIsRefreshData}
             isRefreshData={isRefreshData}
+            listQuestions={listQuestions}
           />
-          <QuestionDelete
-            questionElement={record}
+          <ExamDelete
+            examElement={record}
             setIsRefreshData={setIsRefreshData}
             isRefreshData={isRefreshData}
           />
@@ -57,15 +58,12 @@ const QuestionView = () => {
 
   useEffect(() => {
     getAllSubjects();
+    getAllQuestions();
   }, []);
 
   useEffect(() => {
-    getAllQuestions();
-  }, [isRefreshData]);
-
-  useEffect(() => {
-    getAllQuestions();
-  }, [questionTypeFilter, subjectIdFilter]);
+    getAllExams();
+  }, [isRefreshData, subjectIdFilter]);
 
   const getAllSubjects = async () => {
     setIsLoading(true);
@@ -75,33 +73,40 @@ const QuestionView = () => {
     });
   };
 
+  const getAllExams = async () => {
+    setIsLoading(true);
+    await examAPI.getAll().then((res) => {
+      setIsLoading(false);
+      const listConvertedExams = addDetailQuestionToExam(res.data);
+      setListExams(listConvertedExams);
+    });
+  };
+
   const getAllQuestions = async () => {
     setIsLoading(true);
-    const filterString = convertToFilterString([
-      { key: "subjectId", operator: "==", value: subjectIdFilter },
-      { key: "type", operator: "==", value: questionTypeFilter },
-    ]);
-
-    const params = {
-      filterString: filterString,
-    };
-
-    await questionAPI.getAll(params).then((res) => {
+    await questionAPI.getAll().then((res) => {
+      setIsLoading(false);
       setListQuestions(res.data);
       setIsLoading(false);
     });
   };
 
+  const addDetailQuestionToExam = (listExams) => {
+    listExams?.forEach((exam) => {
+      const listQuestionsOfExam = [];
+      exam?.listQuestionIds?.forEach((questionId) => {
+        const question = listQuestions.find(
+          (question) => question._id == questionId
+        );
+        if (question) listQuestionsOfExam.push(question);
+      });
+      exam.listQuestions = listQuestionsOfExam;
+    });
+    return listExams;
+  };
+
   const handleChangeSubjectFilter = (value) => {
     setQuestionIdFilter(value);
-  };
-
-  const handleChangeQuestionTypeFilter = (value) => {
-    setQuestionTypeFilter(value);
-  };
-
-  const isCorrectAnswer = (answer, listCorrectAnswers) => {
-    return listCorrectAnswers.find((correctAnswer) => correctAnswer == answer);
   };
 
   const renderTableExtra = () => {
@@ -120,20 +125,12 @@ const QuestionView = () => {
               value: question._id,
             }))}
           />
-          <Select
-            placeholder='Chọn loại câu hỏi'
-            style={{ width: 180 }}
-            allowClear
-            onChange={handleChangeQuestionTypeFilter}
-            options={listQuestionTypeKeys.map((key) => ({
-              label: QUESTION_TYPE[key].meaning,
-              value: QUESTION_TYPE[key].code,
-            }))}
-          />
-          <QuestionCreate
+
+          <ExamCreate
             listSubjects={listSubjects}
             setIsRefreshData={setIsRefreshData}
             isRefreshData={isRefreshData}
+            listQuestions={listQuestions}
           />
         </div>
       </>
@@ -141,26 +138,11 @@ const QuestionView = () => {
   };
 
   const renderTableExpanded = (record) => {
-    const columns = [
-      {
-        title: "Câu trả lời",
-        render: (answer) => answer,
-      },
-      {
-        title: "Trạng thái",
-        render: (answer) =>
-          isCorrectAnswer(answer, record.listCorrectAnswers) ? (
-            <CheckCircleOutlined className='text-success fs-4' />
-          ) : (
-            <InfoCircleOutlined className='text-danger fs-4' />
-          ),
-      },
-    ];
     return (
       <>
         <Table
-          dataSource={record.listAnswers}
-          columns={columns}
+          dataSource={record.listQuestions}
+          columns={questionTableColumn}
           pagination={false}
           style={{ margin: "1rem" }}
         ></Table>
@@ -170,11 +152,11 @@ const QuestionView = () => {
 
   return (
     <>
-      <Card title='Danh sách câu hỏi' extra={renderTableExtra()}>
+      <Card title='Danh sách đề thi' extra={renderTableExtra()}>
         {isLoading ? null : (
           <Table
             columns={columns}
-            dataSource={listQuestions}
+            dataSource={listExams}
             expandable={{
               expandedRowRender: (record) => renderTableExpanded(record),
               defaultExpandedRowKeys: ["0"],
@@ -185,4 +167,22 @@ const QuestionView = () => {
     </>
   );
 };
-export default QuestionView;
+export default ExamView;
+
+const questionTableColumn = [
+  {
+    title: "Nội dung",
+    dataIndex: "content",
+    key: "content",
+  },
+  {
+    title: "Câu trả lời đúng",
+    render: (record) => record.listCorrectAnswers.join(","),
+    key: "listCorrectAnswers",
+  },
+  {
+    title: "Loại câu hỏi",
+    render: (record) => QUESTION_TYPE[record.type].meaning,
+    key: "type",
+  },
+];

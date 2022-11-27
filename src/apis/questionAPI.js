@@ -12,7 +12,6 @@ const questionAPI = {
     return axiosClient.put(questionAPI.url, data, { params });
   },
   delete: (params) => {
-    console.log({ params });
     return axiosClient.delete(questionAPI.url, { params });
   },
 };

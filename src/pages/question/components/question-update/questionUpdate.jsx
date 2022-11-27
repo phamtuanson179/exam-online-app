@@ -1,43 +1,66 @@
-import { EditOutlined } from "@ant-design/icons";
-import { Button, DatePicker, Form, Input, Modal, Select } from "antd";
-import moment from "moment/moment";
+import { EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Card, Form, Modal, Select } from "antd";
+import questionAPI from "apis/questionAPI";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import UploadImage from "../../../../components/upload-image";
+import {
+  renderQuestionFillCorrectAnswer,
+  renderQuestionManyCorrectAnswer,
+  renderQuestionOneCorrectAnswer,
+  renderQuestionTrueFalse,
+} from "utils/renderAnswer";
 import { PLACEHOLDER } from "../../../../constants/configs";
-import { ROLE } from "../../../../constants/types";
-import { listUsersSelector } from "../../../../redux/selectors";
-import { updateUserThunk } from "pages/user/redux/userThunks";
+import { QUESTION_TYPE } from "../../../../constants/types";
 
 const { Option } = Select;
 
-const QuestionUpdate = ({ userElement }) => {
+const QuestionUpdate = ({
+  listSubjects,
+  setIsRefreshData,
+  questionElement,
+  isRefreshData,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [avatar, setAvatar] = useState("");
-  const [userForm] = Form.useForm();
-  const dispatch = useDispatch();
-  const user = useSelector(listUsersSelector);
-  const listRoles = Object.keys(ROLE);
+  const [questionForm] = Form.useForm();
+  const listQuestionTypeKeys = Object.keys(QUESTION_TYPE);
+  const [questionType, setQuestionType] = useState("");
 
   useEffect(() => {
-    console.log(userElement._id);
-    userForm.setFieldsValue({
-      fullname: userElement?.fullname,
-      email: userElement?.email,
-      username: userElement?.username,
-      role: userElement?.role,
-      address: userElement?.address,
-      dob: moment(userElement?.dob),
+    setQuestionType(questionElement?.type);
+    questionForm.setFieldsValue({
+      subjectId: questionElement?.subjectId,
+      type: questionElement?.type,
     });
-    setAvatar(userElement?.avatar);
-  }, []);
 
-  useEffect(() => {
-    if (!user.loading) {
-      setIsModalOpen(false);
+    if (questionType == QUESTION_TYPE.ONE.code) {
+      questionForm.setFieldsValue({
+        content: questionElement?.content,
+        1: questionElement.listAnswers[0],
+        2: questionElement.listAnswers[1],
+        3: questionElement.listAnswers[2],
+        4: questionElement.listAnswers[3],
+        listCorrectAnswers: questionElement.listCorrectAnswers[0],
+      });
+    } else if (questionType == QUESTION_TYPE.MANY.code) {
+      questionForm.setFieldsValue({
+        content: questionElement?.content,
+        1: questionElement.listAnswers[0],
+        2: questionElement.listAnswers[1],
+        3: questionElement.listAnswers[2],
+        4: questionElement.listAnswers[3],
+        listCorrectAnswers: questionElement.listCorrectAnswers,
+      });
+    } else if (questionType == QUESTION_TYPE.TRUE_FALSE.code) {
+      questionForm.setFieldsValue({
+        content: questionElement?.content,
+        listCorrectAnswers: questionElement.listCorrectAnswers[0],
+      });
+    } else if (questionType == QUESTION_TYPE.FILL.code) {
+      questionForm.setFieldsValue({
+        content: questionElement?.content,
+        listCorrectAnswers: questionElement.listCorrectAnswers[0],
+      });
     }
-  }, [user]);
-
+  }, [isModalOpen]);
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -46,10 +69,66 @@ const QuestionUpdate = ({ userElement }) => {
     setIsModalOpen(false);
   };
 
-  const onSubmit = (value) => {
-    value.avatar = avatar;
-    value.dob = value.dob.valueOf();
-    dispatch(updateUserThunk({ params: { id: userElement._id }, body: value }));
+  const onChangeQuestionType = (value) => {
+    setQuestionType(value);
+    const subjectId = questionForm.getFieldValue("subjectId");
+    questionForm.resetFields();
+    questionForm.setFieldsValue({ subjectId: subjectId, type: value });
+  };
+
+  const onSubmit = async (value) => {
+    let body;
+    if (questionType == QUESTION_TYPE.ONE.code) {
+      body = {
+        subjectId: value?.subjectId,
+        content: value?.content,
+        type: value?.type,
+        listAnswers: [value?.[1], value?.[2], value?.[3], value?.[4]],
+        listCorrectAnswers: [value?.[value?.listCorrectAnswers]],
+      };
+    } else if (questionType == QUESTION_TYPE.MANY.code) {
+      body = {
+        subjectId: value?.subjectId,
+        content: value?.content,
+        type: value?.type,
+        listAnswers: [value?.[1], value?.[2], value?.[3], value?.[4]],
+        listCorrectAnswers: value?.listCorrectAnswers.map(
+          (index) => value[index]
+        ),
+      };
+    } else if (questionType == QUESTION_TYPE.TRUE_FALSE.code) {
+      body = {
+        subjectId: value?.subjectId,
+        content: value?.content,
+        type: value?.type,
+        listAnswers: ["đúng", "sai"],
+        listCorrectAnswers: [value?.listCorrectAnswers],
+      };
+    } else if (questionType == QUESTION_TYPE.FILL.code) {
+      body = {
+        subjectId: value?.subjectId,
+        content: value?.content,
+        type: value?.type,
+        listAnswers: [],
+        listCorrectAnswers: [value?.listCorrectAnswers],
+      };
+    }
+    await questionAPI.update({ id: questionElement?._id }, body).then((res) => {
+      setIsRefreshData(!isRefreshData);
+      setIsModalOpen(false);
+    });
+  };
+
+  const renderQuestionAnswers = () => {
+    if (questionType == QUESTION_TYPE.ONE.code) {
+      return renderQuestionOneCorrectAnswer();
+    } else if (questionType == QUESTION_TYPE.TRUE_FALSE.code) {
+      return renderQuestionTrueFalse();
+    } else if (questionType == QUESTION_TYPE.MANY.code) {
+      return renderQuestionManyCorrectAnswer();
+    } else if (questionType == QUESTION_TYPE.FILL.code) {
+      return renderQuestionFillCorrectAnswer();
+    }
   };
 
   return (
@@ -58,31 +137,19 @@ const QuestionUpdate = ({ userElement }) => {
         <EditOutlined />
       </Button>
       <Modal
-        title='Basic Modal'
+        getContainer={false}
+        title='Cập nhật câu hỏi'
         visible={isModalOpen}
         onCancel={handleCancel}
-        getContainer={false}
         okButtonProps={{
           htmlType: "submit",
-          form: "userUpdateForm",
+          form: "questionUpdateForm",
         }}
       >
-        <Form
-          layout={"vertical"}
-          form={userForm}
-          onFinish={onSubmit}
-          id='userUpdateForm'
-        >
-          <Form.Item>
-            <UploadImage
-              image={avatar}
-              setImage={setAvatar}
-              className='text-center'
-            />
-          </Form.Item>
+        <Form form={questionForm} onFinish={onSubmit} id='questionUpdateForm'>
           <Form.Item
-            label='Họ tên'
-            name='fullname'
+            label='Môn học'
+            name='subjectId'
             rules={[
               {
                 required: true,
@@ -90,60 +157,38 @@ const QuestionUpdate = ({ userElement }) => {
               },
             ]}
           >
-            <Input placeholder={PLACEHOLDER.NAME} />
-          </Form.Item>
-          <Form.Item
-            label='Email'
-            name='email'
-            rules={[
-              {
-                required: true,
-                message: "Trường này bắt buộc!",
-              },
-              {
-                type: "email",
-                message: "Chưa đúng định dạng!",
-              },
-            ]}
-          >
-            <Input placeholder={PLACEHOLDER.EMAIL} />
-          </Form.Item>
-          <Form.Item
-            label='Tên tài khoản'
-            name='username'
-            rules={[
-              {
-                required: true,
-                message: "Trường này bắt buộc!",
-              },
-            ]}
-          >
-            <Input placeholder={PLACEHOLDER.USERNAME} />
-          </Form.Item>
-          <Form.Item
-            label='Vai trò'
-            name='role'
-            rules={[
-              {
-                required: true,
-                message: "Trường này bắt buộc!",
-              },
-            ]}
-          >
-            <Select placeholder={PLACEHOLDER.ROLE}>
-              {listRoles.map((role, key) => (
-                <Option key={key} value={role}>
-                  {ROLE[role].meaning}
+            <Select placeholder={PLACEHOLDER.SUBJECT}>
+              {listSubjects.map((subject, key) => (
+                <Option key={key} value={subject._id}>
+                  {subject?.name}
                 </Option>
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label='Địa chỉ' name='address'>
-            <Input placeholder={PLACEHOLDER.ADDRESS} />
+          <Form.Item
+            label='Loại câu hỏi'
+            name='type'
+            rules={[
+              {
+                required: true,
+                message: "Trường này bắt buộc!",
+              },
+            ]}
+          >
+            <Select
+              placeholder={PLACEHOLDER.QUESTION_TYPE}
+              onChange={onChangeQuestionType}
+            >
+              {listQuestionTypeKeys.map((questionType, key) => (
+                <Option key={key} value={questionType}>
+                  {QUESTION_TYPE[questionType].meaning}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
-          <Form.Item label='Ngày sinh' name='dob'>
-            <DatePicker placeholder={PLACEHOLDER.DOB} />
-          </Form.Item>
+          <Card style={{ display: questionType ? "block" : "none" }}>
+            {questionType ? renderQuestionAnswers() : null}
+          </Card>
         </Form>
       </Modal>
     </>

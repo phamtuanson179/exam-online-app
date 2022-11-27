@@ -4,21 +4,18 @@ import { useDispatch } from "react-redux";
 import { deleteUserThunk } from "pages/user/redux/userThunks";
 import { DeleteOutlined } from "@ant-design/icons";
 import questionAPI from "apis/questionAPI";
+import examAPI from "apis/examAPI";
 
-const QuestionDelete = ({
-  questionElement,
-  setIsRefreshData,
-  isRefreshData,
-}) => {
+const ExamDelete = ({ examElement, setIsRefreshData, isRefreshData }) => {
   const confirmDelete = async () => {
-    await questionAPI.delete({ id: questionElement?._id }).then((res) => {
+    await examAPI.delete({ id: examElement?._id }).then((res) => {
       setIsRefreshData(!isRefreshData);
     });
   };
 
   return (
     <Popconfirm
-      title='Bạn có muốn xóa câu hỏi này không?'
+      title='Bạn có muốn xóa đề thi này không?'
       onConfirm={confirmDelete}
       okText='Xác nhận'
       cancelText='Hủy'
@@ -29,4 +26,4 @@ const QuestionDelete = ({
     </Popconfirm>
   );
 };
-export default QuestionDelete;
+export default ExamDelete;

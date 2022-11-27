@@ -20,14 +20,13 @@ const SubjectUpdate = ({ subjectElement }) => {
   const subject = useSelector(listSubjectsSelector);
 
   useEffect(() => {
-    console.log(subjectElement._id);
     subjectForm.setFieldsValue({
       name: subjectElement.name,
       alias: subjectElement.alias,
       description: subjectElement.description,
     });
     setImage(subjectElement?.image);
-  }, []);
+  }, [isModalOpen]);
 
   useEffect(() => {
     if (!subject.loading) {
