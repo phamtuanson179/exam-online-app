@@ -54,7 +54,7 @@ const ExamUpdate = ({
   };
 
   const onChangeSubjectId = () => {
-    const listQuestionsOfSelectedSubject = listQuestions
+    const listQuestionsOfSelectedSubject = [...listQuestions]
       .filter(
         (question) => question.subjectId == examForm.getFieldValue("subjectId")
       )

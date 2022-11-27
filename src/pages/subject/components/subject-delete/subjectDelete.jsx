@@ -4,11 +4,13 @@ import { useDispatch } from "react-redux";
 import { deleteUserThunk } from "pages/user/redux/userThunks";
 import { DeleteOutlined } from "@ant-design/icons";
 import { deleteSubjectThunk } from "pages/subject/redux/subjectThunks";
+import subjectAPI from "apis/subjectAPI";
 
-const SubjectDelete = ({ subjectElement }) => {
-  const dispatch = useDispatch();
-  const confirmDeleteSubject = () => {
-    dispatch(deleteSubjectThunk({ id: subjectElement._id }));
+const SubjectDelete = ({ subjectElement, isRefeshData, setIsRefeshData }) => {
+  const confirmDeleteSubject = async () => {
+    await subjectAPI.delete({ id: subjectElement._id }).then((res) => {
+      setIsRefeshData(!isRefeshData);
+    });
   };
 
   return (

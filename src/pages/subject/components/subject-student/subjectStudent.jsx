@@ -1,16 +1,23 @@
 import { EditOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Modal } from "antd";
-import subjectAPI from "apis/subjectAPI";
+import {
+  updateSubjectThunk,
+  updateUserThunk,
+} from "pages/subject/redux/subjectThunks";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import UploadImage from "../../../../components/upload-image";
 import { PLACEHOLDER } from "../../../../constants/configs";
+import { listSubjectsSelector } from "../../../../redux/selectors";
 
 const { TextArea } = Input;
 
-const SubjectUpdate = ({ subjectElement, isRefeshData, setIsRefeshData }) => {
+const SubjectUpdate = ({ subjectElement }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [image, setImage] = useState("");
   const [subjectForm] = Form.useForm();
+  const dispatch = useDispatch();
+  const subject = useSelector(listSubjectsSelector);
 
   useEffect(() => {
     subjectForm.setFieldsValue({
@@ -21,6 +28,12 @@ const SubjectUpdate = ({ subjectElement, isRefeshData, setIsRefeshData }) => {
     setImage(subjectElement?.image);
   }, [isModalOpen]);
 
+  useEffect(() => {
+    if (!subject.loading) {
+      setIsModalOpen(false);
+    }
+  }, [subject]);
+
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -29,13 +42,11 @@ const SubjectUpdate = ({ subjectElement, isRefeshData, setIsRefeshData }) => {
     setIsModalOpen(false);
   };
 
-  const onSubmit = async (value) => {
+  const onSubmit = (value) => {
     value.image = image;
-
-    await subjectAPI.update({ id: subjectElement._id }, value).then((res) => {
-      setIsRefeshData(!isRefeshData);
-      setIsModalOpen(false);
-    });
+    dispatch(
+      updateSubjectThunk({ params: { id: subjectElement._id }, body: value })
+    );
   };
 
   return (

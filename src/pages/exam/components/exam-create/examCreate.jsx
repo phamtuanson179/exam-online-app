@@ -33,7 +33,6 @@ const ExamCreate = ({
     selectedRowKeys,
     onChange: onSelectChange,
   };
-  useEffect(() => {}, []);
 
   const showModal = () => {
     setIsModalOpen(true);
