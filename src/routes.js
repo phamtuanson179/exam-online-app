@@ -2,6 +2,7 @@ import { lazy } from "react";
 
 const User = lazy(() => import("pages/user"));
 const Subject = lazy(() => import("pages/subject"));
+const Classroom = lazy(() => import("pages/classroom"));
 const Question = lazy(() => import("pages/question"));
 const Exam = lazy(() => import("pages/exam"));
 const Dashboard = lazy(() => import("./pages/Home.jsx"));
@@ -23,6 +24,11 @@ const routes = [
   {
     path: "/subject",
     component: () => <Subject />,
+    isInMain: true,
+  },
+  {
+    path: "/classroom",
+    component: () => <Classroom />,
     isInMain: true,
   },
   {
