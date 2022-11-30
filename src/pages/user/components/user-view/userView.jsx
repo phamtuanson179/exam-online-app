@@ -1,4 +1,4 @@
-import { Card, Space, Spin, Table } from "antd";
+import { Card, Space, Table } from "antd";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { listUsersSelector } from "../../../../redux/selectors";
@@ -7,6 +7,7 @@ import { getAllUserThunk } from "pages/user/redux/userThunks";
 import UserDelete from "../user-delete/userDelete";
 import UserUpdate from "../user-update/userUpdate";
 import UserCreate from "../user-create/userCreate";
+import { ROLE } from "constants/types";
 
 const UserView = () => {
   const user = useSelector(listUsersSelector);
@@ -39,6 +40,11 @@ const columns = [
     title: "Ngày sinh",
     key: 4,
     render: (record) => convertDate(record.dob),
+  },
+  {
+    title: "Vai trò",
+    key: 4,
+    render: (record) => ROLE[record.role].meaning,
   },
   { title: "Tên đăng nhập", dataIndex: "username", key: 5 },
   {

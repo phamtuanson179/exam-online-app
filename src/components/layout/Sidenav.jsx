@@ -82,6 +82,19 @@ function Sidenav({ color }) {
             <span className='label'>Quản lý môn học</span>
           </NavLink>
         </Menu.Item>
+        <Menu.Item key='3'>
+          <NavLink to='/classroom'>
+            <span
+              className='icon'
+              style={{
+                background: page === "classroom" ? color : "",
+              }}
+            >
+              <MenuOutlined />
+            </span>
+            <span className='label'>Quản lý lớp học</span>
+          </NavLink>
+        </Menu.Item>
         <Menu.Item key='4'>
           <NavLink to='/question'>
             <span
