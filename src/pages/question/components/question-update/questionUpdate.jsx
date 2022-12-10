@@ -1,5 +1,5 @@
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Card, Form, Modal, Select } from "antd";
+import { Button, Card, Form, message, Modal, Select } from "antd";
 import questionAPI from "apis/questionAPI";
 import { useEffect, useState } from "react";
 import {
@@ -109,11 +109,12 @@ const QuestionUpdate = ({
         subjectId: value?.subjectId,
         content: value?.content,
         type: value?.type,
-        listAnswers: [],
+        listAnswers: [value?.listCorrectAnswers],
         listCorrectAnswers: [value?.listCorrectAnswers],
       };
     }
     await questionAPI.update({ id: questionElement?._id }, body).then((res) => {
+      message.success("Cập nhật câu hỏi thành công!");
       setIsRefreshData(!isRefreshData);
       setIsModalOpen(false);
     });

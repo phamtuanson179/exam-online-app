@@ -1,5 +1,16 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Alert, Button, Form, Input, Modal, Select, Table } from "antd";
+import {
+  Alert,
+  Button,
+  Checkbox,
+  DatePicker,
+  Form,
+  Input,
+  message,
+  Modal,
+  Select,
+  Table,
+} from "antd";
 import examAPI from "apis/examAPI";
 import { useEffect, useState } from "react";
 import { PLACEHOLDER } from "../../../../constants/configs";
@@ -13,14 +24,13 @@ const ExamCreate = ({
   isRefreshData,
   listQuestions,
 }) => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [listQuestionsOfSelectedSubject, setListQuestionsOfSelectedSubject] =
     useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSelectOverAmountQuestion, setIsSelectOverAmountQuestion] =
-    useState(false);
+  useState(false);
   const [examForm] = Form.useForm();
 
+<<<<<<< Updated upstream
   const onSelectChange = (newSelectedRowKeys) => {
     examForm.setFieldsValue({ listQuestionIds: newSelectedRowKeys });
     if (examForm.getFieldValue("amountQuestion") == newSelectedRowKeys.length) {
@@ -34,6 +44,8 @@ const ExamCreate = ({
     onChange: onSelectChange,
   };
 
+=======
+>>>>>>> Stashed changes
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -43,28 +55,22 @@ const ExamCreate = ({
   };
 
   const onSubmit = async (value) => {
-    let body = value;
-    console.log({ value });
-    await examAPI.create(body).then((res) => {
-      examForm.resetFields();
-      setIsSelectOverAmountQuestion(false);
-      setSelectedRowKeys([]);
-      setListQuestionsOfSelectedSubject([]);
-      setIsRefreshData(!isRefreshData);
-      setIsModalOpen(false);
-    });
-  };
+    let body = {
+      ...value,
+      openTime: value.openTime?.valueOf(),
+      closeTime: value.closeTime?.valueOf(),
+    };
 
-  const onChangeSubjectId = () => {
-    const listQuestionsOfSelectedSubject = listQuestions
-      .filter(
-        (question) => question.subjectId == examForm.getFieldValue("subjectId")
-      )
-      .map((question) => {
-        question.key = question._id;
-        return question;
-      });
-    setListQuestionsOfSelectedSubject(listQuestionsOfSelectedSubject);
+    const examRes = await examAPI.create(body);
+    await examAPI.updateQuestionOfExam(
+      { examId: examRes.data._id },
+      { listQuestionIds: body.listQuestionIds }
+    );
+    message.success("Thêm đề thi thành công!");
+
+    examForm.resetFields();
+    setIsRefreshData(!isRefreshData);
+    setIsModalOpen(false);
   };
 
   return (
@@ -83,7 +89,14 @@ const ExamCreate = ({
           form: "examCreateForm",
         }}
       >
-        <Form form={examForm} onFinish={onSubmit} id='examCreateForm'>
+        <Form
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          labelAlign='left'
+          form={examForm}
+          onFinish={onSubmit}
+          id='examCreateForm'
+        >
           <Form.Item
             label='Môn học'
             name='subjectId'
@@ -94,10 +107,7 @@ const ExamCreate = ({
               },
             ]}
           >
-            <Select
-              placeholder={PLACEHOLDER.SUBJECT}
-              onChange={onChangeSubjectId}
-            >
+            <Select placeholder={PLACEHOLDER.SUBJECT}>
               {listSubjects.map((subject, key) => (
                 <Option key={key} value={subject._id}>
                   {subject?.name}
@@ -141,27 +151,11 @@ const ExamCreate = ({
           >
             <Input placeholder='Basic usage' type='number' />
           </Form.Item>
-          <Form.Item
-            label='Danh sách câu hỏi'
-            name='listQuestionIds'
-            rules={[
-              {
-                required: true,
-                message: "Trường này bắt buộc!",
-              },
-            ]}
-            labelCol={{ span: 24 }}
-            wrapperCol={{ span: 24 }}
-          >
-            <Alert
-              message={`Có ${selectedRowKeys.length} câu hỏi được chọn`}
-              type={isSelectOverAmountQuestion ? "error" : "info"}
-            />
-            <Table
-              rowSelection={rowSelection}
-              columns={questionTableColumn}
-              dataSource={listQuestionsOfSelectedSubject}
-            />
+          <Form.Item label='Thời gian mở' name='openTime'>
+            <DatePicker showTime />
+          </Form.Item>
+          <Form.Item label='Thời gian đóng' name='closeTime'>
+            <DatePicker showTime />
           </Form.Item>
         </Form>
       </Modal>
@@ -169,21 +163,3 @@ const ExamCreate = ({
   );
 };
 export default ExamCreate;
-
-const questionTableColumn = [
-  {
-    title: "Nội dung",
-    dataIndex: "content",
-    key: "content",
-  },
-  {
-    title: "Câu trả lời đúng",
-    render: (record) => record.listCorrectAnswers.join(","),
-    key: "listCorrectAnswers",
-  },
-  {
-    title: "Loại câu hỏi",
-    render: (record) => QUESTION_TYPE[record.type].meaning,
-    key: "type",
-  },
-];

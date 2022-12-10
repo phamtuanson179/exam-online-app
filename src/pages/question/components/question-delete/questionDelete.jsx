@@ -1,4 +1,4 @@
-import { Button, Popconfirm } from "antd";
+import { Button, message, Popconfirm } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { deleteUserThunk } from "pages/user/redux/userThunks";
@@ -12,6 +12,7 @@ const QuestionDelete = ({
 }) => {
   const confirmDelete = async () => {
     await questionAPI.delete({ id: questionElement?._id }).then((res) => {
+      message.delete("Xóa câu hỏi thành công!");
       setIsRefreshData(!isRefreshData);
     });
   };

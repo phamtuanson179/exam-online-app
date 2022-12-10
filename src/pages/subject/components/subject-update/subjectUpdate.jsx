@@ -54,18 +54,18 @@ const SubjectUpdate = ({ subjectElement, isRefeshData, setIsRefeshData }) => {
         }}
       >
         <Form
-          layout={"vertical"}
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          labelAlign='left'
           form={subjectForm}
           onFinish={onSubmit}
           id='subjectUpdateForm'
         >
-          <Form.Item>
-            <UploadImage
-              image={image}
-              setImage={setImage}
-              className='text-center'
-            />
-          </Form.Item>
+          <UploadImage
+            image={image}
+            setImage={setImage}
+            className='text-center mb-3'
+          />
           <Form.Item
             label='Tên môn học'
             name='name'
@@ -76,9 +76,6 @@ const SubjectUpdate = ({ subjectElement, isRefeshData, setIsRefeshData }) => {
               },
             ]}
           >
-            <Input placeholder={PLACEHOLDER.NAME} />
-          </Form.Item>
-          <Form.Item label='Mã môn học' name='alias'>
             <Input placeholder={PLACEHOLDER.NAME} />
           </Form.Item>
           <Form.Item label='Mô tả' name='description'>

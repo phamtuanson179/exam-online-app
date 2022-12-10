@@ -86,7 +86,7 @@ const QuestionView = () => {
       filterString: filterString,
     };
 
-    await questionAPI.getAll(params).then((res) => {
+    await questionAPI.get(params).then((res) => {
       setListQuestions(res.data);
       setIsLoading(false);
     });

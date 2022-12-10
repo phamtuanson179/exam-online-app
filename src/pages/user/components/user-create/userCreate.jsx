@@ -54,18 +54,18 @@ const UserCreate = () => {
         }}
       >
         <Form
-          layout={"vertical"}
           form={userForm}
           onFinish={onSubmit}
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          labelAlign='left'
           id='userCreateForm'
         >
-          <Form.Item>
-            <UploadImage
-              image={avatar}
-              setImage={setAvatar}
-              className='text-center'
-            />
-          </Form.Item>
+          <UploadImage
+            image={avatar}
+            setImage={setAvatar}
+            className='text-center mb-3'
+          />
           <Form.Item
             label='Họ tên'
             name='fullname'

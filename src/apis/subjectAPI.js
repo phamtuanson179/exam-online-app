@@ -12,7 +12,6 @@ const subjectAPI = {
     return axiosClient.put(subjectAPI.url, data, { params });
   },
   delete: (params) => {
-    console.log({ params });
     return axiosClient.delete(subjectAPI.url, { params });
   },
   getTeacher: (params) => {

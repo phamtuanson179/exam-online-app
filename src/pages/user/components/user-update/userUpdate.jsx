@@ -57,7 +57,7 @@ const UserUpdate = ({ userElement }) => {
         <EditOutlined />
       </Button>
       <Modal
-        title='Basic Modal'
+        title='Cập nhật tài khoản'
         visible={isModalOpen}
         onCancel={handleCancel}
         getContainer={false}
@@ -67,18 +67,18 @@ const UserUpdate = ({ userElement }) => {
         }}
       >
         <Form
-          layout={"vertical"}
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          labelAlign='left'
           form={userForm}
           onFinish={onSubmit}
           id='userUpdateForm'
         >
-          <Form.Item>
-            <UploadImage
-              image={avatar}
-              setImage={setAvatar}
-              className='text-center'
-            />
-          </Form.Item>
+          <UploadImage
+            image={avatar}
+            setImage={setAvatar}
+            className='text-center mb-3'
+          />
           <Form.Item
             label='Họ tên'
             name='fullname'

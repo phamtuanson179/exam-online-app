@@ -1,5 +1,5 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Card, Form, Modal, Select } from "antd";
+import { Button, Card, Form, message, Modal, Select } from "antd";
 import questionAPI from "apis/questionAPI";
 import { useEffect, useState } from "react";
 import {
@@ -69,11 +69,12 @@ const QuestionCreate = ({ listSubjects, setIsRefreshData, isRefreshData }) => {
         subjectId: value?.subjectId,
         content: value?.content,
         type: value?.type,
-        listAnswers: [],
+        listAnswers: [value?.listCorrectAnswers],
         listCorrectAnswers: [value?.listCorrectAnswers],
       };
     }
     await questionAPI.create(body).then((res) => {
+      message.success("Thêm câu hỏi thành công!");
       setQuestionType("");
       questionForm.resetFields();
       setIsRefreshData(!isRefreshData);

@@ -1,6 +1,17 @@
 import { EditOutlined } from "@ant-design/icons";
-import { Alert, Button, Form, Input, Modal, Select, Table } from "antd";
+import {
+  Alert,
+  Button,
+  Checkbox,
+  DatePicker,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Table,
+} from "antd";
 import examAPI from "apis/examAPI";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import { PLACEHOLDER } from "../../../../constants/configs";
 import { QUESTION_TYPE } from "../../../../constants/types";
@@ -12,37 +23,19 @@ const ExamUpdate = ({
   setIsRefreshData,
   examElement,
   isRefreshData,
-  listQuestions,
 }) => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [listQuestionsOfSelectedSubject, setListQuestionsOfSelectedSubject] =
-    useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSelectOverAmountQuestion, setIsSelectOverAmountQuestion] =
-    useState(false);
   const [examForm] = Form.useForm();
 
-  const onSelectChange = (newSelectedRowKeys) => {
-    examForm.setFieldsValue({ listQuestionIds: newSelectedRowKeys });
-    if (examForm.getFieldValue("amountQuestion") == newSelectedRowKeys.length) {
-      setIsSelectOverAmountQuestion(false);
-    } else setIsSelectOverAmountQuestion(true);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
   useEffect(() => {
     examForm.setFieldsValue({
       subjectId: examElement.subjectId,
       name: examElement.name,
       amountQuestion: examElement.amountQuestion,
       time: examElement.time,
+      openTime: moment(examElement?.openTime),
+      closeTime: moment(examElement?.closeTime),
     });
-    onChangeSubjectId();
-    onSelectChange(examElement.listQuestionIds);
   }, []);
 
   const showModal = () => {
@@ -53,6 +46,7 @@ const ExamUpdate = ({
     setIsModalOpen(false);
   };
 
+<<<<<<< Updated upstream
   const onChangeSubjectId = () => {
     const listQuestionsOfSelectedSubject = [...listQuestions]
       .filter(
@@ -66,17 +60,17 @@ const ExamUpdate = ({
     setListQuestionsOfSelectedSubject(listQuestionsOfSelectedSubject);
   };
 
+=======
+>>>>>>> Stashed changes
   const onSubmit = async (value) => {
     let body = value;
     await examAPI.update({ id: examElement._id }, body).then((res) => {
       examForm.resetFields();
-      setIsSelectOverAmountQuestion(false);
-      setSelectedRowKeys([]);
-      setListQuestionsOfSelectedSubject([]);
       setIsRefreshData(!isRefreshData);
       setIsModalOpen(false);
     });
   };
+
   return (
     <>
       <Button type='warning' className='btn btn-warning' onClick={showModal}>
@@ -90,10 +84,17 @@ const ExamUpdate = ({
         width={1000}
         okButtonProps={{
           htmlType: "submit",
-          form: "examUpdateForm",
+          form: "examCreateForm",
         }}
       >
-        <Form form={examForm} onFinish={onSubmit} id='examUpdateForm'>
+        <Form
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          labelAlign='left'
+          form={examForm}
+          onFinish={onSubmit}
+          id='examCreateForm'
+        >
           <Form.Item
             label='Môn học'
             name='subjectId'
@@ -104,10 +105,7 @@ const ExamUpdate = ({
               },
             ]}
           >
-            <Select
-              placeholder={PLACEHOLDER.SUBJECT}
-              onChange={onChangeSubjectId}
-            >
+            <Select placeholder={PLACEHOLDER.SUBJECT} disabled>
               {listSubjects.map((subject, key) => (
                 <Option key={key} value={subject._id}>
                   {subject?.name}
@@ -151,27 +149,11 @@ const ExamUpdate = ({
           >
             <Input placeholder='Basic usage' type='number' />
           </Form.Item>
-          <Form.Item
-            label='Danh sách câu hỏi'
-            name='listQuestionIds'
-            rules={[
-              {
-                required: true,
-                message: "Trường này bắt buộc!",
-              },
-            ]}
-            labelCol={{ span: 24 }}
-            wrapperCol={{ span: 24 }}
-          >
-            <Alert
-              message={`Có ${selectedRowKeys.length} câu hỏi được chọn`}
-              type={isSelectOverAmountQuestion ? "error" : "info"}
-            />
-            <Table
-              rowSelection={rowSelection}
-              columns={questionTableColumn}
-              dataSource={listQuestionsOfSelectedSubject}
-            />
+          <Form.Item label='Thời gian mở' name='openTime'>
+            <DatePicker showTime />
+          </Form.Item>
+          <Form.Item label='Thời gian đóng' name='closeTime'>
+            <DatePicker showTime />
           </Form.Item>
         </Form>
       </Modal>

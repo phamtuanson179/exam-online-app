@@ -108,3 +108,25 @@ const SubjectView = () => {
   );
 };
 export default SubjectView;
+<<<<<<< Updated upstream
+=======
+
+const columns = [
+  {
+    title: "Tên môn học",
+    dataIndex: "name",
+    key: "name",
+  },
+  { title: "Mô tả", dataIndex: "description", key: "description" },
+  {
+    title: "",
+    key: "actions",
+    render: (record) => (
+      <Space size='middle' key={record}>
+        <SubjectUpdate subjectElement={record} />
+        <SubjectDelete subjectElement={record} />
+      </Space>
+    ),
+  },
+];
+>>>>>>> Stashed changes

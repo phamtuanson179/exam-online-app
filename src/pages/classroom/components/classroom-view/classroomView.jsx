@@ -1,112 +1,96 @@
-import { CheckCircleOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import { Card, Select, Space, Table } from "antd";
-import examAPI from "apis/examAPI";
-import questionAPI from "apis/questionAPI";
+import classroomAPI from "apis/classroomAPI";
 import subjectAPI from "apis/subjectAPI";
-import { QUESTION_TYPE } from "constants/types";
 import { useEffect, useState } from "react";
+import { searchElementById } from "utils/common";
 import { convertToFilterString } from "utils/filter";
-import ExamCreate from "../exam-create/examCreate";
-import ExamDelete from "../exam-delete/examDelete";
-import ExamUpdate from "../exam-update/examUpdate";
+import ClassroomCreate from "../classroom-create/classroomCreate";
+import ClassroomDelete from "../classroom-delete/classroomDelete";
+import ClassroomTeacher from "../classroom-teacher/classroomTeacher";
+import ClassroomUpdate from "../classroom-update/classroomUpdate";
 
 const ClassroomView = () => {
   const [listSubjects, setListSubjects] = useState([]);
-  const [listQuestions, setListQuestions] = useState([]);
-  const [listExams, setListExams] = useState([]);
+  const [listClassrooms, setListClassrooms] = useState([]);
   const [subjectIdFilter, setQuestionIdFilter] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const [isRefreshData, setIsRefreshData] = useState(false);
-
   const columns = [
     {
-      title: "Tên",
+      title: "Tên lớp hợc",
       dataIndex: "name",
-      key: "name",
+      key: "content",
     },
     {
-      title: "Số câu hỏi",
-      dataIndex: "amountQuestion",
-      key: "amountQuestion",
-    },
-    {
-      title: "Thời gian làm bài",
-      dataIndex: "time",
-      key: "time",
+      title: "Môn học",
+      render: (record) => record?.subject?.name,
+      key: "subject",
     },
     {
       title: "",
-      key: "action",
+      key: "actions",
       render: (record) => (
         <Space size='middle' key={record}>
-          {/* <ExamUpdate
-            examElement={record}
-            listSubjects={listSubjects}
-            setIsRefreshData={setIsRefreshData}
+          <ClassroomTeacher
+            classroomElement={record}
             isRefreshData={isRefreshData}
-            listQuestions={listQuestions}
+            setIsRefreshData={setIsRefreshData}
           />
-          <ExamDelete
-            examElement={record}
-            setIsRefreshData={setIsRefreshData}
+          <ClassroomUpdate
+            classroomElement={record}
+            listSubjects={listSubjects}
             isRefreshData={isRefreshData}
-          /> */}
+            setIsRefreshData={setIsRefreshData}
+          />
+          <ClassroomDelete
+            classroomElement={record}
+            isRefreshData={isRefreshData}
+            setIsRefreshData={setIsRefreshData}
+          />
         </Space>
       ),
     },
   ];
-
   useEffect(() => {
     getAllSubjects();
-    getAllQuestions();
   }, []);
 
   useEffect(() => {
-    getAllExams();
+    getAllClassroom();
   }, [isRefreshData, subjectIdFilter]);
 
   const getAllSubjects = async () => {
-    setIsLoading(true);
     await subjectAPI.getAll().then((res) => {
       setListSubjects(res.data);
-      setIsLoading(false);
+      setIsRefreshData(!isRefreshData);
     });
   };
 
-  const getAllExams = async () => {
-    setIsLoading(true);
-    await examAPI.getAll().then((res) => {
-      setIsLoading(false);
-      const listConvertedExams = addDetailQuestionToExam(res.data);
-      setListExams(listConvertedExams);
+  const getAllClassroom = async () => {
+    const filterString = convertToFilterString([
+      { key: "subjectId", operator: "==", value: subjectIdFilter },
+    ]);
+
+    const params = {
+      filterString: filterString,
+    };
+
+    await classroomAPI.getAll(params).then((res) => {
+      const listClassrooms = res.data;
+      listClassrooms?.forEach(
+        (classroom) =>
+          (classroom.subject = searchSubjectById(classroom.subjectId))
+      );
+      setListClassrooms(listClassrooms);
     });
   };
 
-  const getAllQuestions = async () => {
-    setIsLoading(true);
-    await questionAPI.getAll().then((res) => {
-      setIsLoading(false);
-      setListQuestions(res.data);
-      setIsLoading(false);
-    });
-  };
-
-  const addDetailQuestionToExam = (listExams) => {
-    listExams?.forEach((exam) => {
-      const listQuestionsOfExam = [];
-      exam?.listQuestionIds?.forEach((questionId) => {
-        const question = listQuestions.find(
-          (question) => question._id == questionId
-        );
-        if (question) listQuestionsOfExam.push(question);
-      });
-      exam.listQuestions = listQuestionsOfExam;
-    });
-    return listExams;
+  const searchSubjectById = (id) => {
+    return searchElementById(id, listSubjects);
   };
 
   const handleChangeSubjectFilter = (value) => {
     setQuestionIdFilter(value);
+    setIsRefreshData(!isRefreshData);
   };
 
   const renderTableExtra = () => {
@@ -125,27 +109,13 @@ const ClassroomView = () => {
               value: question._id,
             }))}
           />
-          {/* 
-          <ExamCreate
+
+          <ClassroomCreate
             listSubjects={listSubjects}
             setIsRefreshData={setIsRefreshData}
             isRefreshData={isRefreshData}
-            listQuestions={listQuestions}
-          /> */}
+          />
         </div>
-      </>
-    );
-  };
-
-  const renderTableExpanded = (record) => {
-    return (
-      <>
-        <Table
-          dataSource={record.listQuestions}
-          columns={questionTableColumn}
-          pagination={false}
-          style={{ margin: "1rem" }}
-        ></Table>
       </>
     );
   };
@@ -153,36 +123,9 @@ const ClassroomView = () => {
   return (
     <>
       <Card title='Danh sách lớp' extra={renderTableExtra()}>
-        {isLoading ? null : (
-          <Table
-            columns={columns}
-            dataSource={listExams}
-            expandable={{
-              expandedRowRender: (record) => renderTableExpanded(record),
-              defaultExpandedRowKeys: ["0"],
-            }}
-          />
-        )}
+        <Table columns={columns} dataSource={listClassrooms} />
       </Card>
     </>
   );
 };
 export default ClassroomView;
-
-const questionTableColumn = [
-  {
-    title: "Nội dung",
-    dataIndex: "content",
-    key: "content",
-  },
-  {
-    title: "Câu trả lời đúng",
-    render: (record) => record.listCorrectAnswers.join(","),
-    key: "listCorrectAnswers",
-  },
-  {
-    title: "Loại câu hỏi",
-    render: (record) => QUESTION_TYPE[record.type].meaning,
-    key: "type",
-  },
-];

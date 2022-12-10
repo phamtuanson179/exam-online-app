@@ -54,18 +54,18 @@ const SubjectCreate = () => {
         }}
       >
         <Form
-          layout={"vertical"}
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          labelAlign='left'
           form={subjectForm}
           onFinish={onSubmit}
           id='subjectCreateForm'
         >
-          <Form.Item>
             <UploadImage
               image={image}
               setImage={setImage}
-              className='text-center'
+              className='text-center mb-3'
             />
-          </Form.Item>
           <Form.Item
             label='Tên môn học'
             name='name'
@@ -76,9 +76,6 @@ const SubjectCreate = () => {
               },
             ]}
           >
-            <Input placeholder={PLACEHOLDER.NAME} />
-          </Form.Item>
-          <Form.Item label='Mã môn học' name='alias'>
             <Input placeholder={PLACEHOLDER.NAME} />
           </Form.Item>
           <Form.Item label='Mô tả' name='description'>

@@ -2,7 +2,7 @@ import axiosClient from "./baseAPI";
 
 const questionAPI = {
   url: "/question",
-  getAll: (params) => {
+  get: (params) => {
     return axiosClient.get(questionAPI.url, { params });
   },
   create: (body) => {

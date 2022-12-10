@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { message } from "antd";
 import {
   createUserThunk,
   deleteUserThunk,
@@ -13,20 +14,7 @@ export const userSlice = createSlice({
     error: null,
     loading: true,
   },
-  reducers: {
-    // pushUserToListUsers: (state, action) => {
-    //   state.listUsers.push(action.payload);
-    // },
-    // updateUserThunkToListUsers: (state, action) => {
-    //   const updatedUser = action.payload;
-    //   const indexElement = state.listUsers.findIndex(
-    //     (user) => user.id == updateUserThunk.id
-    //   );
-    //   if (indexElement) {
-    //     state.listUsers[indexElement] = updatedUser;
-    //   }
-    // },
-  },
+  reducers: {},
   extraReducers: {
     [getAllUserThunk.pending]: (state, action) => {
       state.loading = true;
@@ -43,6 +31,7 @@ export const userSlice = createSlice({
       state.loading = true;
     },
     [createUserThunk.fulfilled]: (state, action) => {
+      message.success("Thêm người dùng thành công!");
       state.loading = false;
     },
     [createUserThunk.rejected]: (state, action) => {
@@ -53,6 +42,7 @@ export const userSlice = createSlice({
       state.loading = true;
     },
     [updateUserThunk.fulfilled]: (state, action) => {
+      message.success("Cập nhật người dùng thành công!");
       state.loading = false;
     },
     [updateUserThunk.rejected]: (state, action) => {
@@ -63,6 +53,7 @@ export const userSlice = createSlice({
       state.loading = true;
     },
     [deleteUserThunk.fulfilled]: (state, action) => {
+      message.success("Xóa người dùng thành công!");
       state.loading = false;
     },
     [deleteUserThunk.rejected]: (state, action) => {

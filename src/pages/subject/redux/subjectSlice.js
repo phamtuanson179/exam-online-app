@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { message } from "antd";
 import {
   createSubjectThunk,
   deleteSubjectThunk,
@@ -30,6 +31,7 @@ export const subjectSlice = createSlice({
       state.loading = true;
     },
     [createSubjectThunk.fulfilled]: (state, action) => {
+      message.success("Thêm môn học thành công!");
       state.loading = false;
     },
     [createSubjectThunk.rejected]: (state, action) => {
@@ -40,6 +42,7 @@ export const subjectSlice = createSlice({
       state.loading = true;
     },
     [updateSubjectThunk.fulfilled]: (state, action) => {
+      message.success("Cập nhật môn học thành công!");
       state.loading = false;
     },
     [updateSubjectThunk.rejected]: (state, action) => {
@@ -50,6 +53,7 @@ export const subjectSlice = createSlice({
       state.loading = true;
     },
     [deleteSubjectThunk.fulfilled]: (state, action) => {
+      message.success("Xóa môn học thành công!");
       state.loading = false;
     },
     [deleteSubjectThunk.rejected]: (state, action) => {

@@ -82,7 +82,7 @@ function Sidenav({ color }) {
             <span className='label'>Quản lý môn học</span>
           </NavLink>
         </Menu.Item>
-        <Menu.Item key='3'>
+        <Menu.Item key='4'>
           <NavLink to='/classroom'>
             <span
               className='icon'
@@ -95,7 +95,7 @@ function Sidenav({ color }) {
             <span className='label'>Quản lý lớp học</span>
           </NavLink>
         </Menu.Item>
-        <Menu.Item key='4'>
+        <Menu.Item key='5'>
           <NavLink to='/question'>
             <span
               className='icon'
@@ -108,7 +108,7 @@ function Sidenav({ color }) {
             <span className='label'>Quản lý câu hỏi</span>
           </NavLink>
         </Menu.Item>
-        <Menu.Item key='5'>
+        <Menu.Item key='6'>
           <NavLink to='/exam'>
             <span
               className='icon'

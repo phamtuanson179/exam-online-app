@@ -12,7 +12,7 @@ const UserDelete = ({ userElement }) => {
 
   return (
     <Popconfirm
-      title='Bạn có muốn xóa người dùng này không?'
+      title='Bạn có muốn xóa tài khoản này không?'
       onConfirm={confirmDeleteUser}
       okText='Xác nhận'
       cancelText='Hủy'
