@@ -6,7 +6,7 @@ const Classroom = lazy(() => import("pages/classroom"));
 const Question = lazy(() => import("pages/question"));
 const Exam = lazy(() => import("pages/exam"));
 const Dashboard = lazy(() => import("./pages/Home.jsx"));
-const SignIn = lazy(() => import("./pages/SignIn.jsx"));
+const SignIn = lazy(() => import("./pages/sign-in"));
 const SignUp = lazy(() => import("./pages/SignUp.jsx"));
 // const UserManager = lazy(()=>import("./pages/Home"))
 
