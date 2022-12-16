@@ -1,15 +1,5 @@
 import { EditOutlined } from "@ant-design/icons";
-import {
-  Alert,
-  Button,
-  Checkbox,
-  DatePicker,
-  Form,
-  Input,
-  Modal,
-  Select,
-  Table,
-} from "antd";
+import { Button, DatePicker, Form, Input, Modal, Select } from "antd";
 import examAPI from "apis/examAPI";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -46,24 +36,12 @@ const ExamUpdate = ({
     setIsModalOpen(false);
   };
 
-<<<<<<< Updated upstream
-  const onChangeSubjectId = () => {
-    const listQuestionsOfSelectedSubject = [...listQuestions]
-      .filter(
-        (question) => question.subjectId == examForm.getFieldValue("subjectId")
-      )
-      .map((question) => {
-        question.key = question._id;
-        return question;
-      });
-    console.log({ listQuestions, listQuestionsOfSelectedSubject });
-    setListQuestionsOfSelectedSubject(listQuestionsOfSelectedSubject);
-  };
-
-=======
->>>>>>> Stashed changes
   const onSubmit = async (value) => {
-    let body = value;
+    let body = {
+      ...value,
+      openTime: moment(value.openTime)?.valueOf(),
+      closeTime: moment(value.closeTime)?.valueOf(),
+    };
     await examAPI.update({ id: examElement._id }, body).then((res) => {
       examForm.resetFields();
       setIsRefreshData(!isRefreshData);
@@ -161,21 +139,3 @@ const ExamUpdate = ({
   );
 };
 export default ExamUpdate;
-
-const questionTableColumn = [
-  {
-    title: "Nội dung",
-    dataIndex: "content",
-    key: "content",
-  },
-  {
-    title: "Câu trả lời đúng",
-    render: (record) => record.listCorrectAnswers.join(","),
-    key: "listCorrectAnswers",
-  },
-  {
-    title: "Loại câu hỏi",
-    render: (record) => QUESTION_TYPE[record.type].meaning,
-    key: "type",
-  },
-];

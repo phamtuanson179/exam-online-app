@@ -15,26 +15,31 @@ const classroomAPI = {
     return axiosClient.delete(classroomAPI.url, { params });
   },
   getExamOfClassroom: (params) => {
-    return axiosClient.get(`${classroomAPI.url}/exam-of-classroom`, params);
+    return axiosClient.get(`${classroomAPI.url}/exam-of-classroom`, { params });
   },
   updateExamOfClassroom: (params, body) => {
-    return axiosClient.get(`${classroomAPI.url}/exam-of-classroom`, body, {
+    return axiosClient.put(`${classroomAPI.url}/exam-of-classroom`, body, {
       params,
     });
   },
   getTeacherOfClassroom: (params) => {
-    return axiosClient.get(`${classroomAPI.url}/teacher-of-classroom`, params);
+    console.log({ params });
+    return axiosClient.get(`${classroomAPI.url}/teacher-of-classroom`, {
+      params,
+    });
   },
   updateTeacherOfClassroom: (params, body) => {
-    return axiosClient.get(`${classroomAPI.url}/teacher-of-classroom`, body, {
+    return axiosClient.put(`${classroomAPI.url}/teacher-of-classroom`, body, {
       params,
     });
   },
   getStudentOfClassroom: (params) => {
-    return axiosClient.get(`${classroomAPI.url}/student-of-classroom`, params);
+    return axiosClient.get(`${classroomAPI.url}/student-of-classroom`, {
+      params,
+    });
   },
   updateStudentOfClassroom: (params, body) => {
-    return axiosClient.get(`${classroomAPI.url}/student-of-classroom`, body, {
+    return axiosClient.put(`${classroomAPI.url}/student-of-classroom`, body, {
       params,
     });
   },

@@ -1,5 +1,5 @@
 import { QUESTION_TYPE } from "./types";
-import { Form, Radio } from 'antd';
+import { Form, Radio } from "antd";
 
 export const PLACEHOLDER = {
   NAME: "Điền tên của bạn",
@@ -8,10 +8,11 @@ export const PLACEHOLDER = {
   USERNAME: "Điền tên tài khoản của bạn",
   ROLE: "Chọn quyền của bạn",
   ADDRESS: "Điền địa chỉ của bạn",
-  QUESTION_TYPE: 'Chọn một loại câu hỏi',
+  QUESTION_TYPE: "Chọn một loại câu hỏi",
   SUBJECT: "Chọn môn học",
   QUESTION_CONTENT: "Điền nội dung câu hỏi",
-  CORRECT_ANSWERS: "Chọn câu trả lời đúng"
+  CORRECT_ANSWERS: "Chọn câu trả lời đúng",
+  PHONE_NUMBER: "",
 };
 
 // export const RENDER_QUESTION = (questionType, onChange) => {

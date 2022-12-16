@@ -1,15 +1,17 @@
-import { ProfileOutlined, TeamOutlined } from "@ant-design/icons";
+import { SolutionOutlined, UserOutlined } from "@ant-design/icons";
 import { Alert, Button, Form, message, Modal, Select, Table } from "antd";
 import classroomAPI from "apis/classroomAPI";
 import moment from "moment";
 import { useEffect, useState } from "react";
 
-const ClassroomStudent = ({
+const ClassroomExam = ({
   setIsRefreshData,
   isRefreshData,
   classroomElement,
-  listStudents,
+  listExams,
 }) => {
+  const [listExamInSubjectOfClassrooms, setListExamInSubjectOfClassrooms] =
+    useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -25,18 +27,30 @@ const ClassroomStudent = ({
   };
 
   useEffect(() => {
-    if (isModalOpen) getListStudentOfClassroom();
+    if (isModalOpen) {
+      getListExamOfClassroom();
+      filterExamInSubjectOfClassroom();
+    }
   }, [isModalOpen]);
 
-  const getListStudentOfClassroom = async () => {
+  const filterExamInSubjectOfClassroom = () => {
+    console.log({ listExams });
+    const listExamInSubjectOfClassrooms = listExams.filter(
+      (item) => item?.subjectId == classroomElement?.subjectId
+    );
+
+    setListExamInSubjectOfClassrooms(listExamInSubjectOfClassrooms);
+  };
+
+  const getListExamOfClassroom = async () => {
     await classroomAPI
-      .getStudentOfClassroom({
+      .getExamOfClassroom({
         classroomId: classroomElement._id,
       })
       .then((res) => {
         console.log({ res });
-        const listStudentIdOfClassrooms = res.data.map((item) => item.userId);
-        onSelectChange(listStudentIdOfClassrooms);
+        const listExamIdOfClassrooms = res.data.map((item) => item.examId);
+        onSelectChange(listExamIdOfClassrooms);
       });
   };
 
@@ -50,12 +64,12 @@ const ClassroomStudent = ({
 
   const onSubmit = async (value) => {
     await classroomAPI
-      .updateStudentOfClassroom(
+      .updateExamOfClassroom(
         { classroomId: classroomElement._id },
-        { listUserIds: selectedRowKeys }
+        { listExamIds: selectedRowKeys }
       )
       .then((res) => {
-        message.success("Cập nhật danh sách học sinh thành công!");
+        message.success("Cập nhật danh sách đề thi thành công!");
         setIsRefreshData(!isRefreshData);
         setIsModalOpen(false);
       });
@@ -64,11 +78,11 @@ const ClassroomStudent = ({
   return (
     <>
       <Button type='primary' className='btn btn-info' onClick={showModal}>
-        <TeamOutlined />
+        <SolutionOutlined />
       </Button>
       <Modal
         getContainer={false}
-        title='Danh sách học sinh'
+        title='Danh sách đề thi'
         visible={isModalOpen}
         onCancel={handleCancel}
         onOk={onSubmit}
@@ -80,18 +94,18 @@ const ClassroomStudent = ({
           labelAlign='left'
         >
           <Form.Item
-            label='Danh sách học sinh'
+            label='Danh sách đề thi'
             labelCol={{ span: 24 }}
             wrapperCol={{ span: 24 }}
           >
             <Alert
-              message={`Có ${selectedRowKeys?.length} học sinh được chọn`}
+              message={`Có ${selectedRowKeys?.length} đề thi được chọn`}
               type={"info"}
             />
             <Table
               rowSelection={rowSelection}
               columns={column}
-              dataSource={listStudents}
+              dataSource={listExamInSubjectOfClassrooms}
             />
           </Form.Item>
         </Form>
@@ -99,23 +113,29 @@ const ClassroomStudent = ({
     </>
   );
 };
-export default ClassroomStudent;
+export default ClassroomExam;
 
 const column = [
   {
     title: "Tên",
-    dataIndex: "fullname",
+    dataIndex: "name",
   },
   {
-    title: "Email",
-    dataIndex: "email",
+    title: "Thời gian làm bài",
+    dataIndex: "time",
   },
   {
-    title: "Số điện thoại",
-    dataIndex: "phoneNumber",
+    title: "Số lượng câu hỏi",
+    dataIndex: "amountQuestion",
   },
   {
-    title: "Ngày sinh",
-    render: (record) => moment.unix(record?.dob / 1000).format("DD/MM/YYYY"),
+    title: "Thời điểm mở",
+    render: (record) =>
+      moment.unix(record?.openTime / 1000).format("DD/MM/YYYY hh:mm:ss"),
+  },
+  {
+    title: "Thời điểm đóng",
+    render: (record) =>
+      moment.unix(record?.closeTime / 1000).format("DD/MM/YYYY hh:mm:ss"),
   },
 ];

@@ -14,6 +14,12 @@ const userAPI = {
   delete: (params) => {
     return axiosClient.delete(userAPI.url, { params });
   },
+  getTeacher: (params) => {
+    return axiosClient.get(`${userAPI.url}/teacher`, { params });
+  },
+  getStudent: (params) => {
+    return axiosClient.get(`${userAPI.url}/student`, { params });
+  },
 };
 
 export default userAPI;

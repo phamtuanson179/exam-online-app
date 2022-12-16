@@ -1,51 +1,17 @@
 import { PlusOutlined } from "@ant-design/icons";
-import {
-  Alert,
-  Button,
-  Checkbox,
-  DatePicker,
-  Form,
-  Input,
-  message,
-  Modal,
-  Select,
-  Table,
-} from "antd";
+import { Button, DatePicker, Form, Input, message, Modal, Select } from "antd";
 import examAPI from "apis/examAPI";
-import { useEffect, useState } from "react";
+import moment from "moment";
+import { useState } from "react";
 import { PLACEHOLDER } from "../../../../constants/configs";
-import { QUESTION_TYPE } from "../../../../constants/types";
 
 const { Option } = Select;
 
-const ExamCreate = ({
-  listSubjects,
-  setIsRefreshData,
-  isRefreshData,
-  listQuestions,
-}) => {
-  const [listQuestionsOfSelectedSubject, setListQuestionsOfSelectedSubject] =
-    useState([]);
+const ExamCreate = ({ listSubjects, setIsRefreshData, isRefreshData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   useState(false);
   const [examForm] = Form.useForm();
 
-<<<<<<< Updated upstream
-  const onSelectChange = (newSelectedRowKeys) => {
-    examForm.setFieldsValue({ listQuestionIds: newSelectedRowKeys });
-    if (examForm.getFieldValue("amountQuestion") == newSelectedRowKeys.length) {
-      setIsSelectOverAmountQuestion(false);
-    } else setIsSelectOverAmountQuestion(true);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-
-=======
->>>>>>> Stashed changes
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -57,15 +23,11 @@ const ExamCreate = ({
   const onSubmit = async (value) => {
     let body = {
       ...value,
-      openTime: value.openTime?.valueOf(),
-      closeTime: value.closeTime?.valueOf(),
+      openTime: moment(value.openTime)?.valueOf(),
+      closeTime: moment(value.closeTime)?.valueOf(),
     };
 
-    const examRes = await examAPI.create(body);
-    await examAPI.updateQuestionOfExam(
-      { examId: examRes.data._id },
-      { listQuestionIds: body.listQuestionIds }
-    );
+    await examAPI.create(body);
     message.success("Thêm đề thi thành công!");
 
     examForm.resetFields();

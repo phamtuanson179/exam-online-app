@@ -1,35 +1,21 @@
-import { ProfileOutlined } from "@ant-design/icons";
-import {
-  Alert,
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  message,
-  Modal,
-  Select,
-  Table,
-} from "antd";
-import examAPI from "apis/examAPI";
+import { ProfileOutlined, UserOutlined } from "@ant-design/icons";
+import { Alert, Button, Form, message, Modal, Select, Table } from "antd";
+import classroomAPI from "apis/classroomAPI";
+import moment from "moment";
 import { useEffect, useState } from "react";
-import { findElementOfArray1OutOfArray2 } from "utils/common";
-import { PLACEHOLDER } from "../../../../constants/configs";
-import { QUESTION_TYPE } from "../../../../constants/types";
 
 const { Option } = Select;
 
 const ClassroomTeacher = ({
   setIsRefreshData,
   isRefreshData,
-  listQuestions,
   classroomElement,
+  listTeachers,
 }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [listQuestionsOfSelectedSubject, setListQuestionsOfSelectedSubject] =
-    useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const onSelectChange = async (newSelectedRowKeys) => {
+  const onSelectChange = (newSelectedRowKeys) => {
     if (newSelectedRowKeys) {
       setSelectedRowKeys(newSelectedRowKeys);
     }
@@ -41,18 +27,19 @@ const ClassroomTeacher = ({
   };
 
   useEffect(() => {
-    console.log({ classroomElement });
-    renderListTeacherOfClassroom();
-  }, [classroomElement]);
+    if (isModalOpen) getListTeacherOfClassroom();
+  }, [isModalOpen]);
 
-  const renderListTeacherOfClassroom = () => {
-    if (classroomElement.listQuestions?.length > 0) {
-      const listQuestionIds = classroomElement.listQuestions?.map(
-        (question) => question._id
-      );
-      console.log({ listQuestionIds });
-      setSelectedRowKeys(listQuestionIds);
-    }
+  const getListTeacherOfClassroom = async () => {
+    await classroomAPI
+      .getTeacherOfClassroom({
+        classroomId: classroomElement._id,
+      })
+      .then((res) => {
+        console.log({ res });
+        const listTeacherIdOfClassrooms = res.data.map((item) => item.userId);
+        onSelectChange(listTeacherIdOfClassrooms);
+      });
   };
 
   const showModal = () => {
@@ -64,41 +51,26 @@ const ClassroomTeacher = ({
   };
 
   const onSubmit = async (value) => {
-    if (selectedRowKeys.length < classroomElement.amountQuestion) {
-      message.warning(
-        "Số câu hỏi được chọn cần lớn hơn hoặc bằng số câu hỏi của đề thi!"
-      );
-      return;
-    }
-
-    const { listQuestions, ...originExam } = classroomElement;
-    await examAPI.update({ ...originExam, isRandomInAll: isRandomInAll });
-
-    if (!isRandomInAll) {
-      await examAPI.updateQuestionOfExam(
-        { examId: classroomElement._id },
-        { listQuestionIds: selectedRowKeys }
-      );
-    } else
-      await examAPI.updateQuestionOfExam(
-        { examId: classroomElement._id },
-        { listQuestionIds: [] }
-      );
-
-    setSelectedRowKeys([]);
-    setListQuestionsOfSelectedSubject([]);
-    setIsRefreshData(!isRefreshData);
-    setIsModalOpen(false);
+    await classroomAPI
+      .updateTeacherOfClassroom(
+        { classroomId: classroomElement._id },
+        { listUserIds: selectedRowKeys }
+      )
+      .then((res) => {
+        message.success("Cập nhật danh sách giáo viên thành công!");
+        setIsRefreshData(!isRefreshData);
+        setIsModalOpen(false);
+      });
   };
 
   return (
     <>
       <Button type='primary' className='btn btn-info' onClick={showModal}>
-        <ProfileOutlined />
+        <UserOutlined />
       </Button>
       <Modal
         getContainer={false}
-        title='Thêm câu hỏi'
+        title='Danh sách giáo viên'
         visible={isModalOpen}
         onCancel={handleCancel}
         onOk={onSubmit}
@@ -110,18 +82,18 @@ const ClassroomTeacher = ({
           labelAlign='left'
         >
           <Form.Item
-            label='Danh sách câu hỏi'
+            label='Danh sách giáo viên'
             labelCol={{ span: 24 }}
             wrapperCol={{ span: 24 }}
           >
             <Alert
-              message={`Có ${selectedRowKeys?.length} câu hỏi được chọn`}
+              message={`Có ${selectedRowKeys?.length} giáo viên được chọn`}
               type={"info"}
             />
             <Table
               rowSelection={rowSelection}
-              columns={questionTableColumn}
-              dataSource={listQuestionsOfSelectedSubject}
+              columns={column}
+              dataSource={listTeachers}
             />
           </Form.Item>
         </Form>
@@ -131,20 +103,21 @@ const ClassroomTeacher = ({
 };
 export default ClassroomTeacher;
 
-const questionTableColumn = [
+const column = [
   {
-    title: "Nội dung",
-    dataIndex: "content",
-    key: "content",
+    title: "Tên",
+    dataIndex: "fullname",
   },
   {
-    title: "Câu trả lời đúng",
-    render: (record) => record.listCorrectAnswers.join(","),
-    key: "listCorrectAnswers",
+    title: "Email",
+    dataIndex: "email",
   },
   {
-    title: "Loại câu hỏi",
-    render: (record) => QUESTION_TYPE[record.type].meaning,
-    key: "type",
+    title: "Số điện thoại",
+    dataIndex: "phoneNumber",
+  },
+  {
+    title: "Ngày sinh",
+    render: (record) => moment.unix(record?.dob / 1000).format("DD/MM/YYYY"),
   },
 ];

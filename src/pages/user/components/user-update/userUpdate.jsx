@@ -26,6 +26,7 @@ const UserUpdate = ({ userElement }) => {
       username: userElement?.username,
       role: userElement?.role,
       address: userElement?.address,
+      phoneNumber: userElement?.phoneNumber,
       dob: moment(userElement?.dob),
     });
     setAvatar(userElement?.avatar);
@@ -47,7 +48,7 @@ const UserUpdate = ({ userElement }) => {
 
   const onSubmit = (value) => {
     value.avatar = avatar;
-    value.dob = value.dob.valueOf();
+    value.dob = moment(value.dob).valueOf();
     dispatch(updateUserThunk({ params: { id: userElement._id }, body: value }));
   };
 
@@ -136,6 +137,18 @@ const UserUpdate = ({ userElement }) => {
                 </Option>
               ))}
             </Select>
+          </Form.Item>
+          <Form.Item
+            label='Số điện thoại'
+            name='phoneNumber'
+            rules={[
+              {
+                required: true,
+                message: "Trường này bắt buộc!",
+              },
+            ]}
+          >
+            <Input />
           </Form.Item>
           <Form.Item label='Địa chỉ' name='address'>
             <Input placeholder={PLACEHOLDER.ADDRESS} />

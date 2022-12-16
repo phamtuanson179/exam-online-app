@@ -16,8 +16,6 @@ import { findElementOfArray1OutOfArray2 } from "utils/common";
 import { PLACEHOLDER } from "../../../../constants/configs";
 import { QUESTION_TYPE } from "../../../../constants/types";
 
-const { Option } = Select;
-
 const ExamQuestion = ({
   setIsRefreshData,
   isRefreshData,
@@ -30,11 +28,9 @@ const ExamQuestion = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRandomInAll, setIsRandomInAll] = useState(examElement.isRandomInAll);
 
-  const onSelectChange = async (newSelectedRowKeys) => {
+  const onSelectChange = (newSelectedRowKeys) => {
     if (newSelectedRowKeys) {
-      // if (examElement.amountQuestion >= newSelectedRowKeys?.length) {
       setSelectedRowKeys(newSelectedRowKeys);
-      // }
     }
   };
 
@@ -75,21 +71,6 @@ const ExamQuestion = ({
     const value = event.target.checked;
     setIsRandomInAll(value);
   };
-
-  // const deleteQuestionOfExam = async (questionId) => {
-  //   return examAPI.deleteQuestionOfExam({
-  //     questionId: questionId,
-  //     examId: examElement._id,
-  //   });
-  // };
-
-  // const createQuestionOfExam = async (questionId) => {
-  //   if (questionId)
-  //     return examAPI.createQuestionOfExam({
-  //       questionId: questionId,
-  //       examId: examElement._id,
-  //     });
-  // };
 
   const onSubmit = async (value) => {
     if (selectedRowKeys.length < examElement.amountQuestion) {

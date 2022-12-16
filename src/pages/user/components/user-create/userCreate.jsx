@@ -7,6 +7,7 @@ import { PLACEHOLDER } from "../../../../constants/configs";
 import { createUserThunk } from "pages/user/redux/userThunks";
 import { useDispatch, useSelector } from "react-redux";
 import { listUsersSelector } from "redux/selectors";
+import moment from "moment";
 
 const { Option } = Select;
 
@@ -34,7 +35,7 @@ const UserCreate = () => {
 
   const onSubmit = (value) => {
     value.avatar = avatar;
-    value.dob = value.dob?.valueOf();
+    value.dob = moment(value.dob).valueOf();
     dispatch(createUserThunk(value));
   };
 
@@ -123,6 +124,18 @@ const UserCreate = () => {
                 </Option>
               ))}
             </Select>
+          </Form.Item>
+          <Form.Item
+            label='Số điện thoại'
+            name='phoneNumber'
+            rules={[
+              {
+                required: true,
+                message: "Trường này bắt buộc!",
+              },
+            ]}
+          >
+            <Input />
           </Form.Item>
           <Form.Item label='Địa chỉ' name='address'>
             <Input placeholder={PLACEHOLDER.ADDRESS} />

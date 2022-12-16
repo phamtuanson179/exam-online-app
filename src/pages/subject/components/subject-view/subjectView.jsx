@@ -88,10 +88,10 @@ const SubjectView = () => {
       const listSubjects = res.data;
       listSubjects.forEach(async (subject) => {
         await subjectAPI.getTeacher({ subjectId: subject._id }).then((res) => {
-          subject.listTeachers = res.data.map((item) => item.userId);
+          subject.listTeachers = res.data?.map((item) => item.userId);
         });
         await subjectAPI.getStudent({ subjectId: subject._id }).then((res) => {
-          subject.listStudents = res.data.map((item) => item.userId);
+          subject.listStudents = res.data?.map((item) => item.userId);
         });
       });
       console.log("dsfdsfsdfsd");
@@ -108,8 +108,6 @@ const SubjectView = () => {
   );
 };
 export default SubjectView;
-<<<<<<< Updated upstream
-=======
 
 const columns = [
   {
@@ -129,4 +127,3 @@ const columns = [
     ),
   },
 ];
->>>>>>> Stashed changes
