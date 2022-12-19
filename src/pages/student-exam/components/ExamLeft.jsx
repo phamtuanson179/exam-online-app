@@ -1,0 +1,70 @@
+import { Card } from "antd";
+import { STUDENT_QUESTION_TYPE } from "constants/types";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { infoCurrentStudentExamSelector } from "redux/selectors";
+import { convertSecondToTime } from "utils/time";
+import { onChangeQuestion, setIsFinish } from "../redux/studentExamSlice";
+
+const ExamLeft = () => {
+  const infoExam = useSelector(infoCurrentStudentExamSelector);
+  const dispatch = useDispatch();
+  const [countDown, setCountdown] = useState();
+  const [countDownString, setCountdownString] = useState();
+
+  useEffect(() => {
+    setCountdown(infoExam.time);
+  }, [infoExam.time]);
+
+  useEffect(() => {
+    if (!infoExam.isFinish) {
+      if (countDown < 0) {
+        dispatch(setIsFinish(true));
+      } else {
+        setTimeout(() => {
+          if (countDown || countDown === 0)
+            setCountdownString(convertSecondToTime(countDown));
+          setCountdown(countDown - 1);
+        }, 1000);
+      }
+    }
+  }, [countDown]);
+
+  const renderListExam = () => {
+    return infoExam.listQuestions.map((exam, index) => (
+      <div className='col-2'>
+        <button
+          className={`btn   ${
+            infoExam.curQuestionIndex == index ? "btn-warning text-light" : ""
+          }`}
+          onClick={() => onClickButton(index)}
+        >
+          {index + 1}
+        </button>
+      </div>
+    ));
+  };
+
+  const onClickButton = (questionIndex) => {
+    dispatch(onChangeQuestion(questionIndex));
+  };
+
+  const renderExtra = () => {
+    return (
+      <>
+        <div className='fw-bold'>{countDownString}</div>
+      </>
+    );
+  };
+
+  return (
+    <>
+      <Card title='Danh sách câu hỏi' extra={renderExtra()}>
+        <div className='row justify-content-between'>
+          {infoExam ? renderListExam() : ""}
+        </div>
+      </Card>
+    </>
+  );
+};
+export default ExamLeft;

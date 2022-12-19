@@ -5,7 +5,7 @@ import { pushUserToListUsers, updateUserThunkToListUsers } from "./userSlice";
 export const getAllUserThunk = createAsyncThunk(
   "user/getAllUserThunk",
   async (params, thunkParams) => {
-    const res = await userAPI.getAll();
+    const res = await userAPI.get();
     return res;
   }
 );

@@ -37,3 +37,9 @@ export const RESULT_TYPE = {
   PASS: "PASS",
   NO_PASS: "NO_PASS",
 };
+
+export const STUDENT_QUESTION_TYPE = {
+  NOT_ANSWER: "NOT_ANSWER",
+  ANSWERED: "ANSWERED",
+  ANSWERING: "ANSWERING",
+};

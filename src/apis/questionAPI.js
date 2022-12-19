@@ -5,6 +5,9 @@ const questionAPI = {
   get: (params) => {
     return axiosClient.get(questionAPI.url, { params });
   },
+  getById: (params) => {
+    return axiosClient.get(`${questionAPI.url}/get-by-id`, { params });
+  },
   create: (body) => {
     return axiosClient.post(questionAPI.url, body);
   },

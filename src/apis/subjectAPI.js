@@ -2,7 +2,7 @@ import axiosClient from "./baseAPI";
 
 const subjectAPI = {
   url: "/subject",
-  getAll: () => {
+  get: () => {
     return axiosClient.get(subjectAPI.url);
   },
   create: (body) => {

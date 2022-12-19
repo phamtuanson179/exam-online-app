@@ -82,7 +82,7 @@ const ClassroomView = () => {
   }, [isRefreshData, subjectIdFilter]);
 
   const getAllSubjects = async () => {
-    await subjectAPI.getAll().then((res) => {
+    await subjectAPI.get().then((res) => {
       setListSubjects(res.data);
       setIsRefreshData(!isRefreshData);
     });
@@ -127,7 +127,7 @@ const ClassroomView = () => {
       filterString: filterString,
     };
 
-    await classroomAPI.getAll(params).then((res) => {
+    await classroomAPI.get(params).then((res) => {
       const listClassrooms = res.data;
       listClassrooms?.forEach(
         (classroom) =>

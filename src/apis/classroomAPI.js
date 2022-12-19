@@ -2,7 +2,7 @@ import axiosClient from "./baseAPI";
 
 const classroomAPI = {
   url: "/classroom",
-  getAll: () => {
+  get: () => {
     return axiosClient.get(classroomAPI.url);
   },
   create: (body) => {

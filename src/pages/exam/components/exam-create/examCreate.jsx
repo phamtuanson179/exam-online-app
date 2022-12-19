@@ -102,6 +102,18 @@ const ExamCreate = ({ listSubjects, setIsRefreshData, isRefreshData }) => {
             <Input placeholder={PLACEHOLDER.NAME} type='number' />
           </Form.Item>
           <Form.Item
+            label='Số câu trả lời đúng tối thiểu'
+            name='minCorrectAnswerToPass'
+            rules={[
+              {
+                required: true,
+                message: "Trường này bắt buộc!",
+              },
+            ]}
+          >
+            <Input placeholder={PLACEHOLDER.NAME} type='number' />
+          </Form.Item>
+          <Form.Item
             label='Thời gian làm bài (tính theo giây)'
             name='time'
             rules={[

@@ -26,7 +26,7 @@ const QuestionView = () => {
     },
     {
       title: "Câu trả lời đúng",
-      render: (record) => record.listCorrectAnswers.join(","),
+      render: (record) => record.listCorrectAnswers?.join(","),
       key: "listCorrectAnswers",
     },
     {
@@ -69,7 +69,7 @@ const QuestionView = () => {
 
   const getAllSubjects = async () => {
     setIsLoading(true);
-    await subjectAPI.getAll().then((res) => {
+    await subjectAPI.get().then((res) => {
       setListSubjects(res.data);
       setIsLoading(false);
     });

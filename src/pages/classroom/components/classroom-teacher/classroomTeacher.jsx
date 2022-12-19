@@ -36,7 +36,6 @@ const ClassroomTeacher = ({
         classroomId: classroomElement._id,
       })
       .then((res) => {
-        console.log({ res });
         const listTeacherIdOfClassrooms = res.data.map((item) => item.userId);
         onSelectChange(listTeacherIdOfClassrooms);
       });

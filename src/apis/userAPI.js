@@ -2,7 +2,7 @@ import axiosClient from "./baseAPI";
 
 const userAPI = {
   url: "/user",
-  getAll: () => {
+  get: () => {
     return axiosClient.get(userAPI.url);
   },
   create: (body) => {

@@ -66,7 +66,7 @@ const SubjectView = () => {
       filterString: `role==${ROLE.TEACHER.code}`,
     };
 
-    await userAPI.getAll(params).then((res) => {
+    await userAPI.get(params).then((res) => {
       res.data.forEach((item) => (item.key = item._id));
       setListTeachers(res.data);
     });
@@ -77,14 +77,14 @@ const SubjectView = () => {
       filterString: `role==${ROLE.STUDENT.code}`,
     };
 
-    await userAPI.getAll(params).then((res) => {
+    await userAPI.get(params).then((res) => {
       res.data.forEach((item) => (item.key = item._id));
       setListStudents(res.data);
     });
   };
 
   const getAllSubject = async () => {
-    await subjectAPI.getAll().then((res) => {
+    await subjectAPI.get().then((res) => {
       const listSubjects = res.data;
       listSubjects.forEach(async (subject) => {
         await subjectAPI.getTeacher({ subjectId: subject._id }).then((res) => {

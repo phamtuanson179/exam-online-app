@@ -9,3 +9,7 @@ export const listSubjectsSelector = (state) => {
 export const listQuestionsSelector = (state) => {
   return state.question;
 };
+
+export const infoCurrentStudentExamSelector = (state) => {
+  return state.studentExam;
+};

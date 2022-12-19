@@ -5,8 +5,8 @@ const examAPI = {
   get: (params) => {
     return axiosClient.get(examAPI.url, { params });
   },
-  getById: () => {
-    return axiosClient.get(examAPI.url);
+  getById: (params) => {
+    return axiosClient.get(`${examAPI.url}/get-by-id`, { params });
   },
   create: (body) => {
     return axiosClient.post(examAPI.url, body);
@@ -16,6 +16,9 @@ const examAPI = {
   },
   delete: (params) => {
     return axiosClient.delete(examAPI.url, { params });
+  },
+  getExamOfCurrentUser: () => {
+    return axiosClient.get(`${examAPI.url}/current-user`);
   },
   getQuestionOfExam: (params) => {
     return axiosClient.get(`${examAPI.url}/question-of-exam`, { params });

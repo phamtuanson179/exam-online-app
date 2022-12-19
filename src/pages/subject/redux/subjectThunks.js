@@ -4,7 +4,7 @@ import subjectAPI from "apis/subjectAPI";
 export const getAllSubjectThunk = createAsyncThunk(
   "user/getAllSubjectThunk",
   async (params, thunkParams) => {
-    const res = await subjectAPI.getAll();
+    const res = await subjectAPI.get();
     return res;
   }
 );

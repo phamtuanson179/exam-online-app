@@ -7,12 +7,10 @@ import {
   Input,
   message,
   Modal,
-  Select,
   Table,
 } from "antd";
 import examAPI from "apis/examAPI";
 import { useEffect, useState } from "react";
-import { findElementOfArray1OutOfArray2 } from "utils/common";
 import { PLACEHOLDER } from "../../../../constants/configs";
 import { QUESTION_TYPE } from "../../../../constants/types";
 
@@ -44,19 +42,39 @@ const ExamQuestion = ({
   }, []);
 
   useEffect(() => {
-    console.log({ examElement, isRandomInAll });
-    if (!isRandomInAll) renderListQuestionOfExam();
-  }, [isRandomInAll, examElement]);
+    if (isModalOpen) getQuestionOfExam();
+  }, [isModalOpen]);
 
-  const renderListQuestionOfExam = () => {
-    console.log(examElement, examElement.listQuestions);
-    if (examElement.listQuestions?.length > 0) {
-      const listQuestionIds = examElement.listQuestions?.map(
-        (question) => question._id
-      );
-      console.log({ listQuestionIds });
-      setSelectedRowKeys(listQuestionIds);
-    }
+  // useEffect(() => {
+  //   console.log({ examElement, isRandomInAll });
+  //   if (!isRandomInAll) renderListQuestionOfExam();
+  // }, [isRandomInAll, examElement]);
+  useEffect(() => {}, [isRandomInAll]);
+
+  // const renderListQuestionOfExam = () => {
+  //   console.log(examElement, examElement.listQuestions);
+  //   if (examElement.listQuestions?.length > 0) {
+  //     const listQuestionIds = examElement.listQuestions?.map(
+  //       (question) => question._id
+  //     );
+  //     console.log({ listQuestionIds });
+  //     onSelectChange(listQuestionIds);
+  //   }
+  // };
+
+  const getQuestionOfExam = async (exam) => {
+    await examAPI
+      .getQuestionOfExam({
+        examId: examElement._id,
+      })
+      .then((res) => {
+        console.log({ res });
+
+        const listTeacherIdOfClassrooms = res.data.map(
+          (item) => item.questionId
+        );
+        onSelectChange(listTeacherIdOfClassrooms);
+      });
   };
 
   const showModal = () => {
@@ -101,6 +119,7 @@ const ExamQuestion = ({
   };
 
   const filterListQuestionBySubject = () => {
+    console.log({ listQuestions });
     const listQuestionsOfSelectedSubject = listQuestions
       .filter((question) => question.subjectId == examElement.subjectId)
       .map((question) => {
@@ -122,10 +141,6 @@ const ExamQuestion = ({
     } else onSelectChange([]);
   };
 
-  const handleAfterCloseModal = () => {
-    // setIsRefreshData(!isRefreshData);
-  };
-
   return (
     <>
       <Button type='primary' className='btn btn-info' onClick={showModal}>
@@ -136,7 +151,6 @@ const ExamQuestion = ({
         title='Thêm câu hỏi'
         visible={isModalOpen}
         onCancel={handleCancel}
-        afterClose={handleAfterCloseModal}
         onOk={onSubmit}
         width={1000}
       >
@@ -192,7 +206,7 @@ const questionTableColumn = [
   },
   {
     title: "Câu trả lời đúng",
-    render: (record) => record.listCorrectAnswers.join(","),
+    render: (record) => record.listCorrectAnswers?.join(","),
     key: "listCorrectAnswers",
   },
   {

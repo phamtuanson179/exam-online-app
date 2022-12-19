@@ -25,6 +25,7 @@ const ExamUpdate = ({
       time: examElement.time,
       openTime: moment(examElement?.openTime),
       closeTime: moment(examElement?.closeTime),
+      minCorrectAnswerToPass: examElement?.minCorrectAnswerToPass,
     });
   }, []);
 
@@ -106,6 +107,18 @@ const ExamUpdate = ({
           <Form.Item
             label='Số câu hỏi'
             name='amountQuestion'
+            rules={[
+              {
+                required: true,
+                message: "Trường này bắt buộc!",
+              },
+            ]}
+          >
+            <Input placeholder={PLACEHOLDER.NAME} type='number' />
+          </Form.Item>
+          <Form.Item
+            label='Số câu trả lời đúng tối thiểu'
+            name='minCorrectAnswerToPass'
             rules={[
               {
                 required: true,

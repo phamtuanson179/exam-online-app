@@ -1,3 +1,4 @@
+import { message } from "antd";
 import axiosInstance from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -28,9 +29,7 @@ axiosClient.interceptors.response.use(
     return response.data;
   },
   function (err) {
-    // const navigate = useNavigate();
-    // navigate("/sign-in");
-    if (err?.response?.status == 404) console.log(err.response);
+    message.error("Lỗi hệ thống");
     return err;
   }
 );
