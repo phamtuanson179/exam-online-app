@@ -12,6 +12,7 @@ import ClassroomExam from "../classroom-exam/classroomExam";
 import ClassroomStudent from "../classroom-student/classroomStudent";
 import ClassroomTeacher from "../classroom-teacher/classroomTeacher";
 import ClassroomUpdate from "../classroom-update/classroomUpdate";
+import { ROLE } from "constants/types";
 
 const ClassroomView = () => {
   const [listSubjects, setListSubjects] = useState([]);
@@ -19,8 +20,9 @@ const ClassroomView = () => {
   const [listTeachers, setListTeachers] = useState([]);
   const [listExams, setListExams] = useState([]);
   const [listStudents, setListStudents] = useState([]);
-  const [subjectIdFilter, setQuestionIdFilter] = useState("");
+  const [subjectIdFilter, setSubjectIdFilter] = useState("");
   const [isRefreshData, setIsRefreshData] = useState(false);
+  const [currentUser, setCurrentUser] = useState();
   const columns = [
     {
       title: "Tên lớp hợc",
@@ -37,35 +39,45 @@ const ClassroomView = () => {
       key: "actions",
       render: (record) => (
         <Space size='middle' key={record}>
-          <ClassroomExam
-            classroomElement={record}
-            isRefreshData={isRefreshData}
-            setIsRefreshData={setIsRefreshData}
-            listExams={listExams}
-          />
-          <ClassroomStudent
-            classroomElement={record}
-            isRefreshData={isRefreshData}
-            setIsRefreshData={setIsRefreshData}
-            listStudents={listStudents}
-          />
-          <ClassroomTeacher
-            classroomElement={record}
-            isRefreshData={isRefreshData}
-            setIsRefreshData={setIsRefreshData}
-            listTeachers={listTeachers}
-          />
-          <ClassroomUpdate
-            classroomElement={record}
-            listSubjects={listSubjects}
-            isRefreshData={isRefreshData}
-            setIsRefreshData={setIsRefreshData}
-          />
-          <ClassroomDelete
-            classroomElement={record}
-            isRefreshData={isRefreshData}
-            setIsRefreshData={setIsRefreshData}
-          />
+          {currentUser?.role === ROLE.TEACHER.code && (
+            <ClassroomExam
+              classroomElement={record}
+              isRefreshData={isRefreshData}
+              setIsRefreshData={setIsRefreshData}
+              listExams={listExams}
+            />
+          )}
+          {currentUser?.role === ROLE.ADMIN.code && (
+            <ClassroomStudent
+              classroomElement={record}
+              isRefreshData={isRefreshData}
+              setIsRefreshData={setIsRefreshData}
+              listStudents={listStudents}
+            />
+          )}
+          {currentUser?.role === ROLE.ADMIN.code && (
+            <ClassroomTeacher
+              classroomElement={record}
+              isRefreshData={isRefreshData}
+              setIsRefreshData={setIsRefreshData}
+              listTeachers={listTeachers}
+            />
+          )}
+          {currentUser?.role === ROLE.ADMIN.code && (
+            <ClassroomUpdate
+              classroomElement={record}
+              listSubjects={listSubjects}
+              isRefreshData={isRefreshData}
+              setIsRefreshData={setIsRefreshData}
+            />
+          )}
+          {currentUser?.role === ROLE.ADMIN.code && (
+            <ClassroomDelete
+              classroomElement={record}
+              isRefreshData={isRefreshData}
+              setIsRefreshData={setIsRefreshData}
+            />
+          )}
         </Space>
       ),
     },
@@ -78,13 +90,24 @@ const ClassroomView = () => {
   }, []);
 
   useEffect(() => {
+    const currentUserString = localStorage.getItem("currentUser");
+    if (currentUserString) {
+      const currentUser = JSON.parse(currentUserString);
+      setCurrentUser(currentUser);
+    }
+  }, []);
+
+  useEffect(() => {
     getAllClassroom();
   }, [isRefreshData, subjectIdFilter]);
 
   const getAllSubjects = async () => {
     await subjectAPI.get().then((res) => {
-      setListSubjects(res.data);
-      setIsRefreshData(!isRefreshData);
+      if (res.data?.length > 0) {
+        setListSubjects(res.data);
+        setSubjectIdFilter(res.data?.[0]?._id);
+        // setIsRefreshData(!isRefreshData);
+      }
     });
   };
 
@@ -119,6 +142,7 @@ const ClassroomView = () => {
   };
 
   const getAllClassroom = async () => {
+    console.log(subjectIdFilter);
     const filterString = convertToFilterString([
       { key: "subjectId", operator: "==", value: subjectIdFilter },
     ]);
@@ -142,7 +166,8 @@ const ClassroomView = () => {
   };
 
   const handleChangeSubjectFilter = (value) => {
-    setQuestionIdFilter(value);
+    console.log({ value });
+    setSubjectIdFilter(value || "");
     setIsRefreshData(!isRefreshData);
   };
 
@@ -156,10 +181,12 @@ const ClassroomView = () => {
           <Select
             placeholder='Chọn môn học'
             style={{ width: 180 }}
+            value={subjectIdFilter}
             onChange={handleChangeSubjectFilter}
-            options={listSubjects.map((question) => ({
-              label: question.name,
-              value: question._id,
+            allowClear={true}
+            options={listSubjects.map((subject) => ({
+              label: subject.name,
+              value: subject._id,
             }))}
           />
 

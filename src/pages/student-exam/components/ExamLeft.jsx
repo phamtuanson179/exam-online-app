@@ -1,10 +1,9 @@
 import { Card } from "antd";
-import { STUDENT_QUESTION_TYPE } from "constants/types";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { infoCurrentStudentExamSelector } from "redux/selectors";
 import { convertSecondToTime } from "utils/time";
-import { onChangeQuestion, setIsFinish } from "../redux/studentExamSlice";
+import { onChangeQuestion, setCurTime, setIsFinish } from "../redux/studentExamSlice";
 
 const ExamLeft = () => {
   const infoExam = useSelector(infoCurrentStudentExamSelector);
@@ -13,8 +12,10 @@ const ExamLeft = () => {
   const [countDownString, setCountdownString] = useState();
 
   useEffect(() => {
-    setCountdown(infoExam.time);
-  }, [infoExam.time]);
+    const exam = JSON.parse(localStorage.getItem("exam"))
+    setCountdown(exam.time);
+    dispatch(setCurTime(exam.time))
+  }, []);
 
   useEffect(() => {
     if (!infoExam.isFinish) {
@@ -25,24 +26,29 @@ const ExamLeft = () => {
           if (countDown || countDown === 0)
             setCountdownString(convertSecondToTime(countDown));
           setCountdown(countDown - 1);
+          dispatch(setCurTime(countDown - 1))
         }, 1000);
       }
     }
   }, [countDown]);
 
+
+
   const renderListExam = () => {
-    return infoExam.listQuestions.map((exam, index) => (
-      <div className='col-2'>
-        <button
-          className={`btn   ${
-            infoExam.curQuestionIndex == index ? "btn-warning text-light" : ""
-          }`}
-          onClick={() => onClickButton(index)}
-        >
-          {index + 1}
-        </button>
-      </div>
-    ));
+    return infoExam.listQuestions.map((exam, index) => {
+      return (
+        <div className='col-2'>
+          <button
+            className={`btn ${
+              infoExam.curQuestionIndex === index ? "btn-warning text-light" : infoExam.listUserAnswers[index] && infoExam.listUserAnswers[index]?.length > 0 ? 'btn-primary text-light':''
+            }`}
+            onClick={() => onClickButton(index)}
+          >
+            {index + 1}
+          </button>
+        </div>
+      );
+    });
   };
 
   const onClickButton = (questionIndex) => {
@@ -60,7 +66,7 @@ const ExamLeft = () => {
   return (
     <>
       <Card title='Danh sách câu hỏi' extra={renderExtra()}>
-        <div className='row justify-content-between'>
+        <div className='row justify-content-between flex-wrap'>
           {infoExam ? renderListExam() : ""}
         </div>
       </Card>

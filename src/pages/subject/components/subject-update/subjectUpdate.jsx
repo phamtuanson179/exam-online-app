@@ -1,5 +1,5 @@
 import { EditOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Modal } from "antd";
+import { Button, Form, Input, Modal, message } from "antd";
 import subjectAPI from "apis/subjectAPI";
 import { useEffect, useState } from "react";
 import UploadImage from "../../../../components/upload-image";
@@ -7,18 +7,20 @@ import { PLACEHOLDER } from "../../../../constants/configs";
 
 const { TextArea } = Input;
 
-const SubjectUpdate = ({ subjectElement, isRefeshData, setIsRefeshData }) => {
+const SubjectUpdate = ({ subjectElement, isRefreshData, setIsRefreshData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [image, setImage] = useState("");
   const [subjectForm] = Form.useForm();
 
   useEffect(() => {
-    subjectForm.setFieldsValue({
-      name: subjectElement.name,
-      alias: subjectElement.alias,
-      description: subjectElement.description,
-    });
-    setImage(subjectElement?.image);
+    if (isModalOpen) {
+      subjectForm.setFieldsValue({
+        name: subjectElement.name,
+        alias: subjectElement.alias,
+        description: subjectElement.description,
+      });
+      setImage(subjectElement?.image);
+    }
   }, [isModalOpen]);
 
   const showModal = () => {
@@ -33,7 +35,8 @@ const SubjectUpdate = ({ subjectElement, isRefeshData, setIsRefeshData }) => {
     value.image = image;
 
     await subjectAPI.update({ id: subjectElement._id }, value).then((res) => {
-      setIsRefeshData(!isRefeshData);
+      message.success("Cập nhật môn học thành công!");
+      setIsRefreshData(!isRefreshData);
       setIsModalOpen(false);
     });
   };

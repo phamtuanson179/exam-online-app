@@ -1,4 +1,4 @@
-import { Button, Popconfirm } from "antd";
+import { Button, Popconfirm, message } from "antd";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { deleteUserThunk } from "pages/user/redux/userThunks";
@@ -6,10 +6,11 @@ import { DeleteOutlined } from "@ant-design/icons";
 import { deleteSubjectThunk } from "pages/subject/redux/subjectThunks";
 import subjectAPI from "apis/subjectAPI";
 
-const SubjectDelete = ({ subjectElement, isRefeshData, setIsRefeshData }) => {
+const SubjectDelete = ({ subjectElement, isRefreshData, setIsRefreshData }) => {
   const confirmDeleteSubject = async () => {
     await subjectAPI.delete({ id: subjectElement._id }).then((res) => {
-      setIsRefeshData(!isRefeshData);
+      message.success("Xóa môn học thành công!");
+      setIsRefreshData(!isRefreshData);
     });
   };
 

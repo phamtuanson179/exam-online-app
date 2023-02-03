@@ -27,11 +27,12 @@ const ClassroomUpdate = ({
   const [classroomForm] = Form.useForm();
 
   useEffect(() => {
-    classroomForm.setFieldsValue({
-      subjectId: classroomElement?.subjectId,
-      name: classroomElement?.name,
-    });
-  }, []);
+    if (isModalOpen)
+      classroomForm.setFieldsValue({
+        subjectId: classroomElement?.subjectId,
+        name: classroomElement?.name,
+      });
+  }, [isModalOpen]);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -77,7 +78,7 @@ const ClassroomUpdate = ({
           labelAlign='left'
         >
           <Form.Item
-            label='Tên môn học'
+            label='Tên lớp học'
             name='name'
             rules={[
               {

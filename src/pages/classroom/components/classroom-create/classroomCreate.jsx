@@ -18,7 +18,6 @@ import { QUESTION_TYPE } from "../../../../constants/types";
 const { Option } = Select;
 
 const ClassroomCreate = ({ listSubjects, setIsRefreshData, isRefreshData }) => {
- 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [classroomForm] = Form.useForm();
 
@@ -64,7 +63,7 @@ const ClassroomCreate = ({ listSubjects, setIsRefreshData, isRefreshData }) => {
           labelAlign='left'
         >
           <Form.Item
-            label='Tên môn học'
+            label='Tên lớp học'
             name='name'
             rules={[
               {

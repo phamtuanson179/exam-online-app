@@ -2,6 +2,8 @@ import { Button, Col, Form, Input, Layout, Row, Typography } from "antd";
 import signinbg from "../../../assets/images/img-signin.jpg";
 import authAPI from "apis/authAPI";
 import { useHistory } from "react-router-dom";
+import userAPI from "apis/userAPI";
+import { ROLE } from "constants/types";
 
 const { Title } = Typography;
 const { Content } = Layout;
@@ -12,10 +14,18 @@ const SignIn = () => {
 
   const onFinish = async (values) => {
     const body = values;
-    await authAPI.login(body).then((res) => {
+    await authAPI.login(body).then(async (res) => {
       console.log({ res });
       localStorage.setItem("token", res.access_token);
-      history.push("dashboard");
+      await userAPI.getCurrentUser().then((res) => {
+        console.log(res);
+        localStorage.setItem("currentUser",JSON.stringify(res?.data));
+        if (res.data.role === ROLE.STUDENT.code) {
+          history.push("student/list-exams");
+        } else {
+          history.push("dashboard");
+        }
+      });
     });
   };
 

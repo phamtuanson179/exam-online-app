@@ -11,12 +11,15 @@ const Exam = () => {
   // const exam = useSelector(listExamsSelector);
   const dispatch = useDispatch();
   useEffect(() => {
-    const examId = localStorage.getItem("examId");
-    if (examId) {
-      dispatch(getExamByIdThunk({ id: examId }));
-      dispatch(getDetailQuestionOfExamThunk({ examId: examId }));
+    const exam = JSON.parse(localStorage.getItem("exam"));
+    console.log({exam})
+    if (exam) {
+      dispatch(getDetailQuestionOfExamThunk({ examId: exam._id }));
     }
   }, []);
+
+
+  
 
   return (
     <>

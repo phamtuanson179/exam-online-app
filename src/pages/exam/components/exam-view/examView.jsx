@@ -13,7 +13,7 @@ const ExamView = () => {
   const [listSubjects, setListSubjects] = useState([]);
   const [listQuestions, setListQuestions] = useState([]);
   const [listExams, setListExams] = useState([]);
-  const [subjectIdFilter, setQuestionIdFilter] = useState("");
+  const [subjectIdFilter, setSubjectIdFilter] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshData, setIsRefreshData] = useState(false);
 
@@ -67,8 +67,8 @@ const ExamView = () => {
   }, []);
 
   useEffect(() => {
-    getAllExams();
-  }, [isRefreshData, subjectIdFilter]);
+    if (subjectIdFilter) getAllExams();
+  }, [isRefreshData, subjectIdFilter, listQuestions]);
 
   // useEffect(() => {
   //   if (listExams?.length > 0 && listQuestions?.length > 0) {
@@ -84,8 +84,13 @@ const ExamView = () => {
   // }, [listQuestions, listExams]);
 
   const getAllSubject = async () => {
-    const getAllSubjects = await subjectAPI.get();
-    setListSubjects(getAllSubjects.data);
+    await subjectAPI.get().then((res) => {
+      if (res.data?.length > 0) {
+        console.log(res?.data?.[0]._id);
+        setListSubjects(res.data);
+        setSubjectIdFilter(res.data?.[0]?._id)
+      }
+    });
   };
 
   const getAllQuestion = async () => {
@@ -119,7 +124,7 @@ const ExamView = () => {
   // };
 
   const handleChangeSubjectFilter = (value) => {
-    setQuestionIdFilter(value);
+    setSubjectIdFilter(value);
   };
 
   const renderTableExtra = () => {
@@ -133,9 +138,10 @@ const ExamView = () => {
             placeholder='Chọn môn học'
             style={{ width: 180 }}
             onChange={handleChangeSubjectFilter}
-            options={listSubjects?.map((question) => ({
-              label: question.name,
-              value: question._id,
+            value={subjectIdFilter}
+            options={listSubjects?.map((subject) => ({
+              label: subject.name,
+              value: subject._id,
             }))}
           />
 

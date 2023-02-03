@@ -1,28 +1,16 @@
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Modal } from "antd";
-import { createSubjectThunk } from "pages/subject/redux/subjectThunks";
-import { createUserThunk } from "pages/user/redux/userThunks";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { listUsersSelector } from "redux/selectors";
+import { Button, Form, Input, Modal, message } from "antd";
+import subjectAPI from "apis/subjectAPI";
+import { useState } from "react";
 import UploadImage from "../../../../components/upload-image";
 import { PLACEHOLDER } from "../../../../constants/configs";
-import { ROLE } from "../../../../constants/types";
 
 const { TextArea } = Input;
 
-const SubjectCreate = () => {
+const SubjectCreate = ({ setIsRefreshData, isRefreshData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [image, setImage] = useState("");
   const [subjectForm] = Form.useForm();
-  const dispatch = useDispatch();
-  const user = useSelector(listUsersSelector);
-
-  useEffect(() => {
-    if (!user.loading) {
-      setIsModalOpen(false);
-    }
-  }, [user]);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -32,10 +20,14 @@ const SubjectCreate = () => {
     setIsModalOpen(false);
   };
 
-  const onSubmit = (value) => {
+  const onSubmit = async (value) => {
     value.image = image;
-    value.dob = value.dob?.valueOf();
-    dispatch(createSubjectThunk(value));
+    await subjectAPI.create(value).then(() => {
+      message.success("Thêm môn học thành công!");
+      setIsRefreshData(!isRefreshData);
+      subjectForm.resetFields();
+      setIsModalOpen(false);
+    });
   };
 
   return (
@@ -61,11 +53,11 @@ const SubjectCreate = () => {
           onFinish={onSubmit}
           id='subjectCreateForm'
         >
-            <UploadImage
-              image={image}
-              setImage={setImage}
-              className='text-center mb-3'
-            />
+          <UploadImage
+            image={image}
+            setImage={setImage}
+            className='text-center mb-3'
+          />
           <Form.Item
             label='Tên môn học'
             name='name'

@@ -4,7 +4,7 @@ const ListExamsLeft = ({ listExams, currentExam, setCurrentExam }) => {
   const renderListExam = () => {
     return listExams.map((exam, index) => (
       <button
-        className={`btn ${"btn-primary" ? currentExam?.index == index : ""}`}
+        className={`btn w-100 ${currentExam?.index == index ? "btn-primary" : ""}`}
         onClick={(event) => {
           console.log({ index });
           onClickExamButton(index);

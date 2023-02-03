@@ -9,7 +9,6 @@ const { Option } = Select;
 
 const ExamCreate = ({ listSubjects, setIsRefreshData, isRefreshData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  useState(false);
   const [examForm] = Form.useForm();
 
   const showModal = () => {
@@ -27,12 +26,12 @@ const ExamCreate = ({ listSubjects, setIsRefreshData, isRefreshData }) => {
       closeTime: moment(value.closeTime)?.valueOf(),
     };
 
-    await examAPI.create(body);
-    message.success("Thêm đề thi thành công!");
-
-    examForm.resetFields();
-    setIsRefreshData(!isRefreshData);
-    setIsModalOpen(false);
+    await examAPI.create(body).then(() => {
+      message.success("Thêm đề thi thành công!");
+      examForm.resetFields();
+      setIsRefreshData(!isRefreshData);
+      setIsModalOpen(false);
+    });
   };
 
   return (

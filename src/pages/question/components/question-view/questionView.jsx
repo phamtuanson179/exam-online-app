@@ -12,7 +12,7 @@ import QuestionUpdate from "../question-update/questionUpdate";
 const QuestionView = () => {
   const [listSubjects, setListSubjects] = useState([]);
   const [listQuestions, setListQuestions] = useState([]);
-  const [subjectIdFilter, setQuestionIdFilter] = useState("");
+  const [subjectIdFilter, setSubjectIdFilter] = useState("");
   const [questionTypeFilter, setQuestionTypeFilter] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const listQuestionTypeKeys = Object.keys(QUESTION_TYPE);
@@ -60,18 +60,15 @@ const QuestionView = () => {
   }, []);
 
   useEffect(() => {
-    getAllQuestions();
-  }, [isRefreshData]);
-
-  useEffect(() => {
-    getAllQuestions();
-  }, [questionTypeFilter, subjectIdFilter]);
+    if (subjectIdFilter) getAllQuestions();
+  }, [isRefreshData, questionTypeFilter, subjectIdFilter]);
 
   const getAllSubjects = async () => {
-    setIsLoading(true);
     await subjectAPI.get().then((res) => {
-      setListSubjects(res.data);
-      setIsLoading(false);
+      if(res?.data?.length> 0 ){
+         setListSubjects(res.data);
+         setSubjectIdFilter(res.data?.[0]?._id)
+      }
     });
   };
 
@@ -93,7 +90,7 @@ const QuestionView = () => {
   };
 
   const handleChangeSubjectFilter = (value) => {
-    setQuestionIdFilter(value);
+    setSubjectIdFilter(value);
   };
 
   const handleChangeQuestionTypeFilter = (value) => {
@@ -115,9 +112,10 @@ const QuestionView = () => {
             placeholder='Chọn môn học'
             style={{ width: 180 }}
             onChange={handleChangeSubjectFilter}
-            options={listSubjects.map((question) => ({
-              label: question.name,
-              value: question._id,
+            value={subjectIdFilter}
+            options={listSubjects.map((subject) => ({
+              label: subject.name, 
+              value: subject._id,
             }))}
           />
           <Select

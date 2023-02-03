@@ -32,9 +32,10 @@ import {
   StarOutlined,
   TwitterOutlined,
   FacebookFilled,
+  LoginOutlined,
 } from "@ant-design/icons";
 
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import avtar from "../../assets/images/team-2.jpg";
 
@@ -263,11 +264,28 @@ function Header({
 
   const [visible, setVisible] = useState(false);
   const [sidenavType, setSidenavType] = useState("transparent");
+  const [currentUser, setCurrentUser] = useState();
+  const history = useHistory();
+
+  useEffect(() => {
+    const currentUserString = localStorage.getItem("currentUser");
+    if (currentUserString) {
+      const currentUser = JSON.parse(currentUserString);
+      setCurrentUser(currentUser);
+    }
+  }, []);
 
   useEffect(() => window.scrollTo(0, 0));
 
   const showDrawer = () => setVisible(true);
   const hideDrawer = () => setVisible(false);
+
+  const logout = () => {
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("exam");
+    localStorage.removeItem("token");
+    history.push("/sign-in");
+  };
   return (
     <>
       <div className='setting-drwer' onClick={showDrawer}>
@@ -275,14 +293,14 @@ function Header({
       </div>
       <Row gutter={[24, 0]}>
         <Col span={24} md={6}>
-          <Breadcrumb>
+          {/* <Breadcrumb>
             <Breadcrumb.Item>
               <NavLink to='/'>Home</NavLink>
             </Breadcrumb.Item>
             <Breadcrumb.Item style={{ textTransform: "capitalize" }}>
               {breadcrumbTitle}
             </Breadcrumb.Item>
-          </Breadcrumb>
+          </Breadcrumb> */}
           <div className='ant-page-header-heading'>
             <span
               className='ant-page-header-heading-title'
@@ -293,7 +311,7 @@ function Header({
           </div>
         </Col>
         <Col span={24} md={18} className='header-control'>
-          <Badge size='small' count={4}>
+          {/* <Badge size='small' count={4}>
             <Dropdown overlay={menu} trigger={["click"]}>
               <a
                 href='#pablo'
@@ -303,10 +321,22 @@ function Header({
                 {bell}
               </a>
             </Dropdown>
-          </Badge>
-          <Button type='link' onClick={showDrawer}>
+          </Badge> */}
+          <div
+            className='btn-sign-in'
+            style={{ cursor: "pointer" }}
+            onClick={logout}
+          >
+            <LoginOutlined />
+          </div>
+          <div className='btn-sign-in'>
+            {profile}
+            <span>{currentUser?.fullname}</span>
+          </div>
+
+          {/* <Button type='link' onClick={showDrawer}>
             {logsetting}
-          </Button>
+          </Button> */}
           <Button
             type='link'
             className='sidebar-toggler'
@@ -314,6 +344,7 @@ function Header({
           >
             {toggler}
           </Button>
+
           <Drawer
             className='settings-drawer'
             mask={true}
@@ -396,15 +427,15 @@ function Header({
                   <Title level={5}>Navbar Fixed </Title>
                   <Switch onChange={(e) => handleFixedNavbar(e)} />
                 </div>
-                <div className='ant-docment'>
+                {/* <div className='ant-docment'>
                   <ButtonContainer>
                     <Button type='black' size='large'>
                       FREE DOWNLOAD
                     </Button>
                     <Button size='large'>VIEW DOCUMENTATION</Button>
                   </ButtonContainer>
-                </div>
-                <div className='viewstar'>
+                </div> */}
+                {/* <div className='viewstar'>
                   <a href='#pablo'>{<StarOutlined />} Star</a>
                   <a href='#pablo'> 190</a>
                 </div>
@@ -417,19 +448,16 @@ function Header({
                     <Button type='black'>{<TwitterOutlined />}TWEET</Button>
                     <Button type='black'>{<FacebookFilled />}SHARE</Button>
                   </ButtonContainer>
-                </div>
+                </div> */}
               </div>
             </div>
           </Drawer>
-          <Link to='/sign-in' className='btn-sign-in'>
-            {profile}
-            <span>Sign in</span>
-          </Link>
-          <Input
+
+          {/* <Input
             className='header-search'
             placeholder='Type here...'
             prefix={<SearchOutlined />}
-          />
+          /> */}
         </Col>
       </Row>
     </>

@@ -10,15 +10,14 @@
   * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { Layout, Row, Col } from "antd";
-import { HeartFilled } from "@ant-design/icons";
+import { Layout } from "antd";
 
 function Footer() {
   const { Footer: AntFooter } = Layout;
 
   return (
     <AntFooter style={{ background: "#fafafa" }}>
-      <Row className='just'>
+      {/* <Row className='just'>
         <Col xs={24} md={12} lg={12}>
           <div className='copyright'>
             © 2021, made with
@@ -71,7 +70,7 @@ function Footer() {
             </ul>
           </div>
         </Col>
-      </Row>
+      </Row> */}
     </AntFooter>
   );
 }

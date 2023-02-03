@@ -8,6 +8,9 @@ const examAPI = {
   getById: (params) => {
     return axiosClient.get(`${examAPI.url}/get-by-id`, { params });
   },
+  getByClassroomId: (params) => {
+    return axiosClient.get(`${examAPI.url}/get-by-classroom-id`, { params });
+  },
   create: (body) => {
     return axiosClient.post(examAPI.url, body);
   },

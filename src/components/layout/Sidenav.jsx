@@ -11,101 +11,176 @@
 */
 
 // import { useState } from "react";
-import { Menu, Button } from "antd";
-import { NavLink, useLocation } from "react-router-dom";
-import logo from "../../assets/images/logo.png";
 import { MenuOutlined } from "@ant-design/icons";
+import { Menu } from "antd";
+import { useEffect, useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import logo from "../../assets/favicon.png";
+import { ROLE } from "constants/types";
 
 function Sidenav({ color }) {
   const { pathname } = useLocation();
   const page = pathname.replace("/", "");
+  const [currentUser, setCurrentUser] = useState();
+
+  useEffect(() => {
+    const rawData = localStorage.getItem("currentUser");
+    if (rawData) {
+      const currentUser = JSON.parse(rawData);
+      setCurrentUser(currentUser);
+    }
+  }, []);
 
   return (
     <>
       <div className='brand'>
-        <img src={logo} alt='' />
-        <span>HUST</span>
+        <img src={logo} />
+        <span className=" ms-3 fs-4 text-danger">HUST</span>
       </div>
       <hr />
       <Menu theme='light' mode='inline'>
-        <Menu.Item key='1'>
-          <NavLink to='/dashboard'>
-            <span
-              className='icon'
-              style={{
-                background: page === "dashboard" ? color : "",
-              }}
-            >
-              <MenuOutlined />
-            </span>
-            <span className='label'>Dashboard</span>
-          </NavLink>
-        </Menu.Item>
-        <Menu.Item key='2'>
-          <NavLink to='/user'>
-            <span
-              className='icon'
-              style={{
-                background: page === "user" ? color : "",
-              }}
-            >
-              <MenuOutlined />
-            </span>
-            <span className='label'>Quản lý tài khoản</span>
-          </NavLink>
-        </Menu.Item>
-        <Menu.Item key='3'>
-          <NavLink to='/subject'>
-            <span
-              className='icon'
-              style={{
-                background: page === "subject" ? color : "",
-              }}
-            >
-              <MenuOutlined />
-            </span>
-            <span className='label'>Quản lý môn học</span>
-          </NavLink>
-        </Menu.Item>
-        <Menu.Item key='4'>
-          <NavLink to='/classroom'>
-            <span
-              className='icon'
-              style={{
-                background: page === "classroom" ? color : "",
-              }}
-            >
-              <MenuOutlined />
-            </span>
-            <span className='label'>Quản lý lớp học</span>
-          </NavLink>
-        </Menu.Item>
-        <Menu.Item key='5'>
-          <NavLink to='/question'>
-            <span
-              className='icon'
-              style={{
-                background: page === "question" ? color : "",
-              }}
-            >
-              <MenuOutlined />
-            </span>
-            <span className='label'>Quản lý câu hỏi</span>
-          </NavLink>
-        </Menu.Item>
-        <Menu.Item key='6'>
-          <NavLink to='/exam'>
-            <span
-              className='icon'
-              style={{
-                background: page === "exam" ? color : "",
-              }}
-            >
-              <MenuOutlined />
-            </span>
-            <span className='label'>Quản lý đề thi</span>
-          </NavLink>
-        </Menu.Item>
+        {/* dashboard  */}
+        {currentUser?.role === ROLE.TEACHER.code && (
+          <Menu.Item className='menu-item-header'>
+            Dashboard
+          </Menu.Item>
+        )}
+        {currentUser?.role === ROLE.TEACHER.code && (
+          <Menu.Item>
+            <NavLink to='/dashboard'>
+              <span
+                className='icon'
+                style={{
+                  background: page === "dashboard" ? color : "",
+                }}
+              >
+                <MenuOutlined />
+              </span>
+              <span className='label'>Dashboard</span>
+            </NavLink>
+          </Menu.Item>
+        )}
+
+        {/* user  */}
+        {currentUser?.role === ROLE.ADMIN.code && (
+          <Menu.Item className='menu-item-header' >
+            Người dùng
+          </Menu.Item>
+        )}
+        {currentUser?.role === ROLE.ADMIN.code && (
+          <Menu.Item>
+            <NavLink to='/user'>
+              <span
+                className='icon'
+                style={{
+                  background: page === "user" ? color : "",
+                }}
+              >
+                <MenuOutlined />
+              </span>
+              <span className='label'>Quản lý tài khoản</span>
+            </NavLink>
+          </Menu.Item>
+        )}
+
+        {/* classroom && subject  */}
+        {(currentUser?.role === ROLE.ADMIN.code ||
+          currentUser?.role === ROLE.TEACHER.code )&& (
+            <Menu.Item className='menu-item-header' >
+              Lớp học
+            </Menu.Item>
+          )}
+        {currentUser?.role === ROLE.ADMIN.code && (
+          <Menu.Item key='3'>
+            <NavLink to='/subject'>
+              <span
+                className='icon'
+                style={{
+                  background: page === "subject" ? color : "",
+                }}
+              >
+                <MenuOutlined />
+              </span>
+              <span className='label'>Quản lý môn học</span>
+            </NavLink>
+          </Menu.Item>
+        )}
+        {currentUser?.role === ROLE.ADMIN.code ||
+        currentUser?.role === ROLE.TEACHER.code ? (
+          <Menu.Item key='4'>
+            <NavLink to='/classroom'>
+              <span
+                className='icon'
+                style={{
+                  background: page === "classroom" ? color : "",
+                }}
+              >
+                <MenuOutlined />
+              </span>
+              <span className='label'>Quản lý lớp học</span>
+            </NavLink>
+          </Menu.Item>
+        ) : null}
+
+        {/* exam && question */}
+        {currentUser?.role === ROLE.TEACHER.code && (
+          <Menu.Item className='menu-item-header' >
+            Đề thi
+          </Menu.Item>
+        )}
+        {currentUser?.role === ROLE.TEACHER.code && (
+          <Menu.Item >
+            <NavLink to='/question'>
+              <span
+                className='icon'
+                style={{
+                  background: page === "question" ? color : "",
+                }}
+              >
+                <MenuOutlined />
+              </span>
+              <span className='label'>Quản lý câu hỏi</span>
+            </NavLink>
+          </Menu.Item>
+        )}
+
+        {currentUser?.role === ROLE.TEACHER.code && (
+          <Menu.Item key='6'>
+            <NavLink to='/exam'>
+              <span
+                className='icon'
+                style={{
+                  background: page === "exam" ? color : "",
+                }}
+              >
+                <MenuOutlined />
+              </span>
+              <span className='label'>Quản lý đề thi</span>
+            </NavLink>
+          </Menu.Item>
+        )}
+
+        {/* history  */}
+        {currentUser?.role === ROLE.TEACHER.code && (
+          <Menu.Item className='menu-item-header' >
+            Lịch sử thi
+          </Menu.Item>
+        )}
+        {currentUser?.role === ROLE.TEACHER.code && (
+          <Menu.Item key='6'>
+            <NavLink to='/result'>
+              <span
+                className='icon'
+                style={{
+                  background: page === "result" ? color : "",
+                }}
+              >
+                <MenuOutlined />
+              </span>
+              <span className='label'>Quản lý lịch sử thi</span>
+            </NavLink>
+          </Menu.Item>
+        )}
       </Menu>
     </>
   );

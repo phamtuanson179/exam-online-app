@@ -1,4 +1,4 @@
-import "antd/dist/antd.css";
+import "antd/dist/antd.min.css";
 import "bootstrap/dist/css/bootstrap.css";
 import { lazy } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
@@ -6,13 +6,15 @@ import Main from "./components/layout/Main";
 import "./styles/customs/style.scss";
 import "./styles/main.scss";
 import "./styles/responsive.scss";
+import StudentMain from "components/layout/StudentMain";
 
 const User = lazy(() => import("pages/user"));
 const Subject = lazy(() => import("pages/subject"));
 const Classroom = lazy(() => import("pages/classroom"));
 const Question = lazy(() => import("pages/question"));
 const Exam = lazy(() => import("pages/exam"));
-const Dashboard = lazy(() => import("./pages/Home.jsx"));
+const Result = lazy(() => import("pages/result"));
+const Dashboard = lazy(() => import("./pages/dashboard"));
 const SignIn = lazy(() => import("./pages/sign-in"));
 const SignUp = lazy(() => import("./pages/SignUp.jsx"));
 const StudentListExams = lazy(() => import("pages/student-list-exams/index"));
@@ -27,8 +29,11 @@ function App() {
         </Route>
         <Route path='/sign-in' component={SignIn} />
         <Route path='/sign-up' component={SignUp} />
-        <Route path='/student/list-exams' component={StudentListExams} />
-        <Route path='/student/exam' component={StudentExam} />
+        <StudentMain>
+          <Route path='/student/list-exams' component={StudentListExams} />
+          <Route path='/student/exam' component={StudentExam} />
+        </StudentMain>
+
         <Main>
           <Route path='/dashboard' component={Dashboard} />
           <Route path='/user' component={User} />
@@ -36,6 +41,7 @@ function App() {
           <Route path='/classroom' component={Classroom} />
           <Route path='/question' component={Question} />
           <Route path='/exam' component={Exam} />
+          <Route path='/result' component={Result} />
         </Main>
       </Switch>
     </div>

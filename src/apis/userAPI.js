@@ -8,6 +8,11 @@ const userAPI = {
   create: (body) => {
     return axiosClient.post(userAPI.url, body);
   },
+  createBatch: (body) => {
+    return axiosClient.post(`${userAPI.url}/batch`, body, {
+      headers: { "Content-Type": "Multipart/formData" },
+    });
+  },
   update: (params, data) => {
     return axiosClient.put(userAPI.url, data, { params });
   },
@@ -19,6 +24,9 @@ const userAPI = {
   },
   getStudent: (params) => {
     return axiosClient.get(`${userAPI.url}/student`, { params });
+  },
+  getCurrentUser: () => {
+    return axiosClient.get(`${userAPI.url}/currentUser`);
   },
 };
 

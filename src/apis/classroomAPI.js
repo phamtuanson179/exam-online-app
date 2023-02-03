@@ -2,8 +2,11 @@ import axiosClient from "./baseAPI";
 
 const classroomAPI = {
   url: "/classroom",
-  get: () => {
-    return axiosClient.get(classroomAPI.url);
+  get: (params) => {
+    return axiosClient.get(classroomAPI.url,{params});
+  },
+  getClassByExamId: (params) => {
+    return axiosClient.get(classroomAPI.url+'/get-class-by-exam-id',{params});
   },
   create: (body) => {
     return axiosClient.post(classroomAPI.url, body);

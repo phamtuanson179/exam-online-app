@@ -10,18 +10,16 @@
   * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState, useEffect } from "react";
+import { Affix, Layout } from "antd";
+import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { Layout, Drawer, Affix } from "antd";
-import Sidenav from "./Sidenav";
 import Header from "./Header";
-import Footer from "./Footer";
+import logo from "../../assets/favicon.png";
 
-const { Header: AntHeader, Content, Sider } = Layout;
+const { Header: AntHeader, Content } = Layout;
 
-function Main({ children }) {
+function StudentMain({ children }) {
   const [visible, setVisible] = useState(false);
-  const [placement, setPlacement] = useState("right");
   const [sidenavColor, setSidenavColor] = useState("#1890ff");
   const [sidenavType, setSidenavType] = useState("transparent");
   const [fixed, setFixed] = useState(false);
@@ -34,67 +32,14 @@ function Main({ children }) {
   let { pathname, breadcrumbTitle } = useLocation();
   pathname = pathname.replace("/", "");
 
-  useEffect(() => {
-    if (pathname === "rtl") {
-      setPlacement("left");
-    } else {
-      setPlacement("right");
-    }
-  }, [pathname]);
-
   return (
-    <Layout
-      className={`layout-dashboard ${
-        pathname === "profile" ? "layout-profile" : ""
-      } ${pathname === "rtl" ? "layout-dashboard-rtl" : ""}`}
-    >
-      <Drawer
-        title={false}
-        placement={placement === "right" ? "left" : "right"}
-        closable={false}
-        onClose={() => setVisible(false)}
-        visible={visible}
-        key={placement === "right" ? "left" : "right"}
-        width={250}
-        className={`drawer-sidebar ${
-          pathname === "rtl" ? "drawer-sidebar-rtl" : ""
-        } `}
-      >
-        <Layout
-          className={`layout-dashboard ${
-            pathname === "rtl" ? "layout-dashboard-rtl" : ""
-          }`}
-        >
-          <Sider
-            trigger={null}
-            width={250}
-            theme='light'
-            className={`sider-primary ant-layout-sider-primary ${
-              sidenavType === "#fff" ? "active-route" : ""
-            }`}
-            style={{ background: sidenavType }}
-          >
-            <Sidenav color={sidenavColor} />
-          </Sider>
-        </Layout>
-      </Drawer>
-      <Sider
-        breakpoint='lg'
-        collapsedWidth='0'
-        trigger={null}
-        width={250}
-        theme='light'
-        className={`sider-primary ant-layout-sider-primary ${
-          sidenavType === "#fff" ? "active-route" : ""
-        }`}
-        style={{ background: sidenavType }}
-      >
-        <Sidenav color={sidenavColor} />
-      </Sider>
-      <Layout>
+    <Layout className={`layout-dashboard `}>
+      <Layout className='ms-0'>
         {fixed ? (
           <Affix>
-            <AntHeader className={`${fixed ? "ant-header-fixed" : ""}`}>
+            <AntHeader
+              className={`${fixed ? "ant-header-fixed" : ""} position-relative`}
+            >
               <Header
                 onPress={openDrawer}
                 name={pathname}
@@ -103,11 +48,26 @@ function Main({ children }) {
                 handleSidenavType={handleSidenavType}
                 handleFixedNavbar={handleFixedNavbar}
                 breadcrumbTitle={breadcrumbTitle}
-              />
+              >
+                {" "}
+              </Header>
+              <div
+                className='brand position-absolute d-flex justify-content-start align-items-center'
+                style={{
+                  top: "50%",
+                  left: "2rem",
+                  transform: "translateY(-50%)",
+                }}
+              >
+                <img src={logo} height={30} alt='' />
+                <span className=' ms-3 fs-3 text-danger'>HUST</span>
+              </div>
             </AntHeader>
           </Affix>
         ) : (
-          <AntHeader className={`${fixed ? "ant-header-fixed" : ""}`}>
+          <AntHeader
+            className={`${fixed ? "ant-header-fixed" : ""} position-relative`}
+          >
             <Header
               onPress={openDrawer}
               name={pathname}
@@ -116,7 +76,19 @@ function Main({ children }) {
               handleSidenavType={handleSidenavType}
               handleFixedNavbar={handleFixedNavbar}
               breadcrumbTitle={breadcrumbTitle}
-            />
+            ></Header>
+
+            <div
+              className='brand position-absolute d-flex justify-content-start align-items-center'
+              style={{
+                top: "50%",
+                left: "2rem",
+                transform: "translateY(-50%)",
+              }}
+            >
+              <img src={logo} height={30} alt='' />
+              <span className=' ms-3 fs-3 text-danger'>HUST</span>
+            </div>
           </AntHeader>
         )}
         <Content className='content-ant'>{children}</Content>
@@ -125,4 +97,4 @@ function Main({ children }) {
   );
 }
 
-export default Main;
+export default StudentMain;

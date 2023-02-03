@@ -12,6 +12,9 @@ axiosClient.interceptors.request.use(function (config) {
     accept: "application/json",
     "Content-Type": "application/json",
   };
+  if (config.headers?.["Content-Type"]) {
+    delete headers?.["Content-Type"]
+  }
 
   if (localStorage.getItem("token")) {
     headers = {

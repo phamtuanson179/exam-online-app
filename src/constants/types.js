@@ -43,3 +43,14 @@ export const STUDENT_QUESTION_TYPE = {
   ANSWERED: "ANSWERED",
   ANSWERING: "ANSWERING",
 };
+
+export const SPECTRUM_CHART_TYPE = {
+  POINT: {
+    code: "POINT",
+    meaning: "Theo điểm",
+  },
+  AMOUNT: {
+    code: "AMOUNT",
+    meaning: "Theo số câu trả lời đúng",
+  },
+};
