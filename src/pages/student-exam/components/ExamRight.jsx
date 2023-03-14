@@ -1,5 +1,5 @@
 import { Card, Checkbox, Input, Radio, Space } from "antd";
-import {ClearOutlined} from '@ant-design/icons'
+import { ClearOutlined } from "@ant-design/icons";
 import { QUESTION_TYPE } from "constants/types";
 import { useDispatch, useSelector } from "react-redux";
 import { infoCurrentStudentExamSelector } from "redux/selectors";
@@ -95,9 +95,9 @@ const ExamRight = () => {
     }
   };
 
-  const onClearAnswer = ()=>{
-    dispatch(onChangeAnswer([]))
-  }
+  const onClearAnswer = () => {
+    dispatch(onChangeAnswer([]));
+  };
 
   const onChangeUserAnswer = (value) => {
     dispatch(onChangeAnswer(value));
@@ -108,13 +108,21 @@ const ExamRight = () => {
       <Card title='Chi tiết câu hỏi' extra={<ExamResult />}>
         {infoExam.curQuestion ? (
           <>
-              <Card
-                type='inner'
-                title={infoExam.curQuestion.content}
-                extra={<button className="btn text-danger" onClick={onClearAnswer}><ClearOutlined /></button>}
-              >
-                 {infoExam.curQuestion ? renderQuestion() : ""}
-              </Card>
+            <Card
+              type='inner'
+              title={infoExam.curQuestion.content}
+              headStyle={{whiteSpace:'normal', textOverflow:'inherit'}}
+              extra={
+                <button
+                  className='btn text-danger'
+                  onClick={onClearAnswer}
+                >
+                  <ClearOutlined />
+                </button>
+              }
+            >
+              {infoExam.curQuestion ? renderQuestion() : ""}
+            </Card>
           </>
         ) : (
           ""

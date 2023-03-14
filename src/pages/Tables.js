@@ -50,7 +50,6 @@ const formProps = {
   },
   onChange(info) {
     if (info.file.status !== "uploading") {
-      console.log(info.file, info.fileList);
     }
     if (info.file.status === "done") {
       message.success(`${info.file.name} file uploaded successfully`);
@@ -587,7 +586,6 @@ const dataproject = [
 ];
 
 function Tables() {
-  const onChange = (e) => console.log(`radio checked:${e.target.value}`);
 
   return (
     <>

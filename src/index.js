@@ -18,24 +18,24 @@ import App from "./App";
 import { Space, Spin } from "antd";
 
 ReactDOM.render(
-  <BrowserRouter>
-    <Suspense
-      fallback={
-        <Space
-          style={{
-            width: "100vw",
-            height: "100vh",
-            justifyContent: "center",
-          }}
-        >
-          <Spin size='large' />
-        </Space>
-      }
-    >
+  <Suspense
+    fallback={
+      <Space
+        style={{
+          width: "100vw",
+          height: "100vh",
+          justifyContent: "center",
+        }}
+      >
+        <Spin size='large' />
+      </Space>
+    }
+  >
+    <BrowserRouter>
       <Provider store={store}>
         <App />
       </Provider>
-    </Suspense>
-  </BrowserRouter>,
+    </BrowserRouter>
+  </Suspense>,
   document.getElementById("root")
 );

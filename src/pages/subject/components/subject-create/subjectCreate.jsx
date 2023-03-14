@@ -70,6 +70,18 @@ const SubjectCreate = ({ setIsRefreshData, isRefreshData }) => {
           >
             <Input placeholder={PLACEHOLDER.NAME} />
           </Form.Item>
+          <Form.Item
+            label='Mã môn học'
+            name='alias'
+            rules={[
+              {
+                required: true,
+                message: "Trường này bắt buộc!",
+              },
+            ]}
+          >
+            <Input placeholder={PLACEHOLDER.NAME} />
+          </Form.Item>
           <Form.Item label='Mô tả' name='description'>
             <TextArea rows={4} />
           </Form.Item>

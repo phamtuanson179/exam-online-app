@@ -1,8 +1,8 @@
-import { Card, Select, Space, Table } from "antd";
+import { EditOutlined, ProfileOutlined } from "@ant-design/icons";
+import { Button, Card, Select, Space, Table } from "antd";
 import examAPI from "apis/examAPI";
 import questionAPI from "apis/questionAPI";
 import subjectAPI from "apis/subjectAPI";
-import { QUESTION_TYPE } from "constants/types";
 import { useEffect, useState } from "react";
 import ExamCreate from "../exam-create/examCreate";
 import ExamDelete from "../exam-delete/examDelete";
@@ -16,6 +16,8 @@ const ExamView = () => {
   const [subjectIdFilter, setSubjectIdFilter] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshData, setIsRefreshData] = useState(false);
+  const [modifiedElement, setModifiedElement] = useState();
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   const columns = [
     {
@@ -44,13 +46,17 @@ const ExamView = () => {
             isRefreshData={isRefreshData}
             listQuestions={listQuestions}
           />
-          <ExamUpdate
-            examElement={record}
-            listSubjects={listSubjects}
-            setIsRefreshData={setIsRefreshData}
-            isRefreshData={isRefreshData}
-            listQuestions={listQuestions}
-          />
+          <Button
+            type='warning'
+            className='btn btn-warning'
+            onClick={() => {
+              setModifiedElement(record);
+              setIsUpdateModalOpen(true);
+            }}
+          >
+            <EditOutlined />
+          </Button>
+
           <ExamDelete
             examElement={record}
             setIsRefreshData={setIsRefreshData}
@@ -70,25 +76,11 @@ const ExamView = () => {
     if (subjectIdFilter) getAllExams();
   }, [isRefreshData, subjectIdFilter, listQuestions]);
 
-  // useEffect(() => {
-  //   if (listExams?.length > 0 && listQuestions?.length > 0) {
-  //     const listConvertedExams = listExams?.map((originExam) => {
-  //       const exam = { ...originExam };
-  //       getQuestionOfExam(exam);
-  //       console.log({ exam });
-  //       return exam;
-  //     });
-
-  //     setListConvertedExams(listConvertedExams);
-  //   }
-  // }, [listQuestions, listExams]);
-
   const getAllSubject = async () => {
     await subjectAPI.get().then((res) => {
       if (res.data?.length > 0) {
-        console.log(res?.data?.[0]._id);
         setListSubjects(res.data);
-        setSubjectIdFilter(res.data?.[0]?._id)
+        setSubjectIdFilter(res.data?.[0]?._id);
       }
     });
   };
@@ -160,6 +152,15 @@ const ExamView = () => {
     <>
       <Card title='Danh sách đề thi' extra={renderTableExtra()}>
         {isLoading ? null : <Table columns={columns} dataSource={listExams} />}
+        <ExamUpdate
+          examElement={modifiedElement}
+          listSubjects={listSubjects}
+          setIsRefreshData={setIsRefreshData}
+          isRefreshData={isRefreshData}
+          listQuestions={listQuestions}
+          isUpdateModalOpen={isUpdateModalOpen}
+          setIsUpdateModalOpen={setIsUpdateModalOpen}
+        />
       </Card>
     </>
   );

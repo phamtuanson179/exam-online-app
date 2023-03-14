@@ -12,9 +12,9 @@
 
 import { Affix, Layout } from "antd";
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
-import Header from "./Header";
+import { Outlet, useLocation } from "react-router-dom";
 import logo from "../../assets/favicon.png";
+import Header from "./Header";
 
 const { Header: AntHeader, Content } = Layout;
 
@@ -48,9 +48,7 @@ function StudentMain({ children }) {
                 handleSidenavType={handleSidenavType}
                 handleFixedNavbar={handleFixedNavbar}
                 breadcrumbTitle={breadcrumbTitle}
-              >
-                {" "}
-              </Header>
+              />
               <div
                 className='brand position-absolute d-flex justify-content-start align-items-center'
                 style={{
@@ -76,7 +74,7 @@ function StudentMain({ children }) {
               handleSidenavType={handleSidenavType}
               handleFixedNavbar={handleFixedNavbar}
               breadcrumbTitle={breadcrumbTitle}
-            ></Header>
+            />
 
             <div
               className='brand position-absolute d-flex justify-content-start align-items-center'
@@ -91,7 +89,9 @@ function StudentMain({ children }) {
             </div>
           </AntHeader>
         )}
-        <Content className='content-ant'>{children}</Content>
+        <Content className='content-ant'>
+          <Outlet />
+        </Content>
       </Layout>
     </Layout>
   );

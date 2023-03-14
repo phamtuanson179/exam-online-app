@@ -4,7 +4,7 @@ import examAPI from "apis/examAPI";
 import resultAPI from "apis/resultAPI";
 import { useEffect, useState } from "react";
 import ResultDelete from "../result-delete/resultDelete";
-import { DownCircleOutlined } from "@ant-design/icons";
+import { DownCircleOutlined, DownloadOutlined } from "@ant-design/icons";
 import fileSaver from "file-saver";
 import excel from "exceljs";
 import moment from "moment";
@@ -67,19 +67,20 @@ const ResultView = () => {
     });
   };
 
-  const getAllExam = async () => {
-    await examAPI.get().then((res) => {
-      if (res?.data?.length > 0) {
-        setListExams(res?.data);
-        setCurExamId(res?.data[0]?._id);
-      }
-    });
-  };
+  // const getAllExam = async () => {
+  //   await examAPI.get().then((res) => {
+  //     if (res?.data?.length > 0) {
+  //       setListExams(res?.data);
+  //       setCurExamId(res?.data[0]?._id);
+  //     }
+  //   });
+  // };
 
   const columns = [
     {
       title: "Học sinh",
       render: (record) => record.user.fullname,
+      fixed: "left",
     },
     {
       title: "Email",
@@ -97,28 +98,28 @@ const ResultView = () => {
       title: "Trạng thái",
       render: (record) => (record?.isPass ? "Đạt" : "Không đạt"),
     },
-    {
-      title: "",
-      key: "actions",
-      render: (record) => (
-        <Space size='middle' key={record}>
-          <ResultDelete classroomElement={record} />
-        </Space>
-      ),
-    },
+    // {
+    //   title: "",
+    //   key: "actions",
+    //   render: (record) => (
+    //     <Space size='middle' key={record}>
+    //       <ResultDelete classroomElement={record} />
+    //     </Space>
+    //   ),
+    // },
   ];
 
-  const getClassByExamId = async () => {
-    const params = {
-      examId: curExamId,
-    };
-    await classroomAPI.getClassByExamId(params).then((res) => {
-      if (res?.data?.length > 0) {
-        setListClassrooms(res?.data);
-        setcurClassroomId(res?.data[0]?._id);
-      }
-    });
-  };
+  // const getClassByExamId = async () => {
+  //   const params = {
+  //     examId: curExamId,
+  //   };
+  //   await classroomAPI.getClassByExamId(params).then((res) => {
+  //     if (res?.data?.length > 0) {
+  //       setListClassrooms(res?.data);
+  //       setcurClassroomId(res?.data[0]?._id);
+  //     }
+  //   });
+  // };
 
   const getAllResult = async () => {
     const params = {
@@ -139,22 +140,17 @@ const ResultView = () => {
   };
 
   const downloadResult = async () => {
-    // await resultAPI.downloadResult(params).then((res) => {
-    //   console.log({ res });
-    //   var blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    //   fileSaver.saveAs(blob, 'fixi.xlsx');
-
-    //   // const file_name = 'danh_sach_lich_su_thi.xlsx';
-    //   // FileSaver.saveAs(res, file_name);
-    // });
-
     let workbook = new excel.Workbook();
     let worksheet = workbook.addWorksheet("Lịch sử thi");
     worksheet.columns = [
       { header: "Tên học sinh", key: "fullname", width: 25 },
       { header: "Email", key: "email", width: 25 },
       { header: "Số điện thoại", key: "phoneNumber", width: 25 },
-      { header: "Số câu trả lời đúng", key: "numberOfCorrectAnswer", width: 25 },
+      {
+        header: "Số câu trả lời đúng",
+        key: "numberOfCorrectAnswer",
+        width: 25,
+      },
       { header: "Thời gian thi (giây)", key: "time", width: 25 },
       { header: "Thời gian nộp bài", key: "createdAt", width: 25 },
       { header: "Kết quả thi", key: "isPass", width: 25 },
@@ -165,7 +161,7 @@ const ResultView = () => {
       phoneNumber: data.user?.phoneNumber,
       numberOfCorrectAnswer: data?.numberOfCorrectAnswer,
       time: data?.time,
-      createdAt:moment(data?.result.createdAt).format('hh:mm:ss DD/MM/YYYY') ,
+      createdAt: moment(data?.result.createdAt).format("hh:mm:ss DD/MM/YYYY"),
       isPass: data?.isPass === 1 ? "Đạt" : "Không đạt",
     }));
     worksheet.addRows(convertDataToExcelData);
@@ -174,7 +170,7 @@ const ResultView = () => {
       var blob = new Blob([res], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-      fileSaver.saveAs(blob, "fixi.xlsx");
+      fileSaver.saveAs(blob, "lich_su_thi.xlsx");
     });
   };
 
@@ -208,8 +204,8 @@ const ResultView = () => {
               }))}
             />
           </Tooltip>
-          <Button onClick={downloadResult}>
-            <DownCircleOutlined />
+          <Button onClick={downloadResult} type="primary">
+            <DownloadOutlined />
           </Button>
         </div>
       </>
@@ -219,7 +215,7 @@ const ResultView = () => {
   return (
     <>
       <Card title='Danh sách lịch sử thi' extra={renderTableExtra()}>
-        <Table columns={columns} dataSource={listResults} />
+        <Table columns={columns} dataSource={listResults} scroll={{x:true}} />
       </Card>
     </>
   );

@@ -1,11 +1,10 @@
 import { createSlice, current } from "@reduxjs/toolkit";
+import { isTwoStringArraySimilar } from "utils/common";
 import {
   createResultThunk,
   getDetailQuestionOfExamThunk,
   getExamByIdThunk,
 } from "./studentExamThunks";
-import { isTwoStringArraySimilar } from "utils/common";
-import { useHistory } from "react-router-dom";
 
 export const studentExamSlice = createSlice({
   name: "studentExam",
@@ -27,6 +26,7 @@ export const studentExamSlice = createSlice({
       state.listUserAnswers = Array(state.listQuestions.length).fill([]);
       state.curQuestion = state.listQuestions?.[0];
       state.curQuestionIndex = 0;
+      // state.isFinish = false;
     },
     onChangeQuestion: (state, action) => {
       const questionIndex = action.payload;
@@ -44,11 +44,9 @@ export const studentExamSlice = createSlice({
     },
     setIsFinish: (state, action) => {
       state.isFinish = action.payload;
-      console.log(state);
 
       if (state.isFinish) {
         const exam = JSON.parse(localStorage.getItem("exam"));
-
         state.result = {
           examId: exam._id,
           time: exam.time - state.curTime,
@@ -67,12 +65,11 @@ export const studentExamSlice = createSlice({
             (item) => item.status == true
           )?.length;
 
-        state.result.isPass = state.result.numberOfCorrectAnswer >= exam.minCorrectAnswerToPass ? true : false
-        console.log(current(state))
+        state.result.isPass =
+          state.result.numberOfCorrectAnswer >= exam.minCorrectAnswerToPass
+            ? true
+            : false;
       }
-    },
-    processResult: (state, action) => {
-      console.log(state.exam.id);
     },
   },
   extraReducers: {
@@ -93,8 +90,8 @@ export const studentExamSlice = createSlice({
     },
     [getDetailQuestionOfExamThunk.fulfilled]: (state, action) => {
       state.listQuestions = action.payload;
-      state.curQuestion = state.listQuestions?.[0]
-      state.curQuestionIndex = 0
+      state.curQuestion = state.listQuestions?.[0];
+      state.curQuestionIndex = 0;
       state.loading = false;
     },
     [getDetailQuestionOfExamThunk.rejected]: (state, action) => {

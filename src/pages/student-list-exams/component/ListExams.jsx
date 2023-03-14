@@ -15,12 +15,13 @@ const ListExams = () => {
 
   useEffect(() => {
     getResultByExamId();
+    localStorage.setItem("exam", JSON.stringify(currentExam));
   }, [currentExam]);
 
   const getResultByExamId = async () => {
     if (currentExam?._id)
-      await resultAPI.getByExamId({ examId: currentExam?._id }).then(res=>{
-        setHistoryOfCurrentExam(res?.data?.[0])
+      await resultAPI.getByExamId({ examId: currentExam?._id }).then((res) => {
+        setHistoryOfCurrentExam(res?.data?.[0]);
       });
   };
 
@@ -38,16 +39,19 @@ const ListExams = () => {
   return (
     <>
       <div className='container mt-5'>
-        <div className='row'>
-          <div className='col-4'>
+        <div className='row g-3'>
+          <div className='col-12 col-md-4'>
             <ListExamsLeft
               listExams={listExams}
               currentExam={currentExam}
               setCurrentExam={setCurrentExam}
             ></ListExamsLeft>
           </div>
-          <div className='col-8'>
-            <ListExamsRight currentExam={currentExam} historyOfCurrentExam={historyOfCurrentExam}></ListExamsRight>
+          <div className='col-12 col-md-8'>
+            <ListExamsRight
+              currentExam={currentExam}
+              historyOfCurrentExam={historyOfCurrentExam}
+            ></ListExamsRight>
           </div>
         </div>
       </div>

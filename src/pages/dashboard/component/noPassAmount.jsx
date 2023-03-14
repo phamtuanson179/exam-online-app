@@ -16,9 +16,7 @@ const NoPassAmount = ({ classroomId, examId }) => {
     await reportAPI
       .getNoPassAmount({ classroomId: classroomId, examId: examId })
       .then((res) => {
-        if (res?.data) {
-          setAmount(res?.data);
-        }
+        setAmount(res?.data);
       });
   };
 

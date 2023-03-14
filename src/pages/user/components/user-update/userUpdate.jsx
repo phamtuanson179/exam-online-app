@@ -1,18 +1,20 @@
-import { EditOutlined } from "@ant-design/icons";
-import { Button, DatePicker, Form, Input, Modal, Select } from "antd";
+import { DatePicker, Form, Input, Modal, Select } from "antd";
 import moment from "moment/moment";
+import { updateUserThunk } from "pages/user/redux/userThunks";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import UploadImage from "../../../../components/upload-image";
 import { PLACEHOLDER } from "../../../../constants/configs";
 import { ROLE } from "../../../../constants/types";
 import { listUsersSelector } from "../../../../redux/selectors";
-import { updateUserThunk } from "pages/user/redux/userThunks";
 
 const { Option } = Select;
 
-const UserUpdate = ({ userElement }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const UserUpdate = ({
+  userElement,
+  setIsUpdateModalOpen,
+  isUpdateModalOpen,
+}) => {
   const [avatar, setAvatar] = useState("");
   const [userForm] = Form.useForm();
   const dispatch = useDispatch();
@@ -20,47 +22,40 @@ const UserUpdate = ({ userElement }) => {
   const listRoles = Object.keys(ROLE);
 
   useEffect(() => {
-    userForm.setFieldsValue({
-      fullname: userElement?.fullname,
-      email: userElement?.email,
-      username: userElement?.username,
-      role: userElement?.role,
-      address: userElement?.address,
-      phoneNumber: userElement?.phoneNumber,
-      dob: moment(userElement?.dob),
-    });
-    setAvatar(userElement?.avatar);
-  }, []);
+    if (isUpdateModalOpen) {
+      userForm.setFieldsValue({
+        fullname: userElement?.fullname,
+        email: userElement?.email,
+        username: userElement?.username,
+        role: userElement?.role,
+        address: userElement?.address,
+        phoneNumber: userElement?.phoneNumber,
+      });
+      setAvatar(userElement?.avatar);
+    }
+  }, [isUpdateModalOpen]);
 
   useEffect(() => {
     if (!user.loading) {
-      setIsModalOpen(false);
+      setIsUpdateModalOpen(false);
     }
   }, [user]);
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
   const onSubmit = (value) => {
     value.avatar = avatar;
-    value.dob = moment(value.dob).valueOf();
     dispatch(updateUserThunk({ params: { id: userElement._id }, body: value }));
+    userForm.resetFields()
   };
 
   return (
     <>
-      <Button type='warning' className='btn btn-warning' onClick={showModal}>
+      {/* <Button type='warning' className='btn btn-warning' onClick={showModal}>
         <EditOutlined />
-      </Button>
+      </Button> */}
       <Modal
         title='Cập nhật tài khoản'
-        visible={isModalOpen}
-        onCancel={handleCancel}
+        visible={isUpdateModalOpen}
+        onCancel={() => setIsUpdateModalOpen(false)}
         getContainer={false}
         okButtonProps={{
           htmlType: "submit",
@@ -75,11 +70,11 @@ const UserUpdate = ({ userElement }) => {
           onFinish={onSubmit}
           id='userUpdateForm'
         >
-          <UploadImage
+          {/* <UploadImage
             image={avatar}
             setImage={setAvatar}
             className='text-center mb-3'
-          />
+          /> */}
           <Form.Item
             label='Họ tên'
             name='fullname'
@@ -109,18 +104,6 @@ const UserUpdate = ({ userElement }) => {
             <Input placeholder={PLACEHOLDER.EMAIL} />
           </Form.Item>
           <Form.Item
-            label='Tên tài khoản'
-            name='username'
-            rules={[
-              {
-                required: true,
-                message: "Trường này bắt buộc!",
-              },
-            ]}
-          >
-            <Input placeholder={PLACEHOLDER.USERNAME} />
-          </Form.Item>
-          <Form.Item
             label='Vai trò'
             name='role'
             rules={[
@@ -141,20 +124,17 @@ const UserUpdate = ({ userElement }) => {
           <Form.Item
             label='Số điện thoại'
             name='phoneNumber'
-            rules={[
-              {
-                required: true,
-                message: "Trường này bắt buộc!",
-              },
-            ]}
+            // rules={[
+            //   {
+            //     required: true,
+            //     message: "Trường này bắt buộc!",
+            //   },
+            // ]}
           >
             <Input />
           </Form.Item>
           <Form.Item label='Địa chỉ' name='address'>
             <Input placeholder={PLACEHOLDER.ADDRESS} />
-          </Form.Item>
-          <Form.Item label='Ngày sinh' name='dob'>
-            <DatePicker placeholder={PLACEHOLDER.DOB} />
           </Form.Item>
         </Form>
       </Modal>

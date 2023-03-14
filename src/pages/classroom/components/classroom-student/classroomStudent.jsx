@@ -1,6 +1,7 @@
 import { ProfileOutlined, TeamOutlined } from "@ant-design/icons";
 import { Alert, Button, Form, message, Modal, Select, Table } from "antd";
 import classroomAPI from "apis/classroomAPI";
+import { ROLE } from "constants/types";
 import moment from "moment";
 import { useEffect, useState } from "react";
 
@@ -9,9 +10,11 @@ const ClassroomStudent = ({
   isRefreshData,
   classroomElement,
   listStudents,
+  setIsStudentModalOpen,
+  isStudentModalOpen,
+  currentUser,
 }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const onSelectChange = (newSelectedRowKeys) => {
     if (newSelectedRowKeys) {
@@ -25,8 +28,8 @@ const ClassroomStudent = ({
   };
 
   useEffect(() => {
-    if (isModalOpen) getListStudentOfClassroom();
-  }, [isModalOpen]);
+    if (isStudentModalOpen) getListStudentOfClassroom();
+  }, [isStudentModalOpen]);
 
   const getListStudentOfClassroom = async () => {
     await classroomAPI
@@ -34,18 +37,9 @@ const ClassroomStudent = ({
         classroomId: classroomElement._id,
       })
       .then((res) => {
-        console.log({ res });
         const listStudentIdOfClassrooms = res.data.map((item) => item.userId);
         onSelectChange(listStudentIdOfClassrooms);
       });
-  };
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
   };
 
   const onSubmit = async (value) => {
@@ -57,21 +51,21 @@ const ClassroomStudent = ({
       .then((res) => {
         message.success("Cập nhật danh sách học sinh thành công!");
         setIsRefreshData(!isRefreshData);
-        setIsModalOpen(false);
+        setIsStudentModalOpen(false);
       });
   };
 
   return (
     <>
-      <Button type='primary' className='btn btn-info' onClick={showModal}>
-        <TeamOutlined />
-      </Button>
       <Modal
         getContainer={false}
         title='Danh sách học sinh'
-        visible={isModalOpen}
-        onCancel={handleCancel}
-        onOk={onSubmit}
+        visible={isStudentModalOpen}
+        onCancel={() => setIsStudentModalOpen(false)}
+        onOk={() => {
+          if (currentUser?.role === ROLE.ADMIN.code) onSubmit();
+          else message.warning("Bạn không có quyền với hành động này!");
+        }}
         width={1000}
       >
         <Form
@@ -113,9 +107,5 @@ const column = [
   {
     title: "Số điện thoại",
     dataIndex: "phoneNumber",
-  },
-  {
-    title: "Ngày sinh",
-    render: (record) => moment.unix(record?.dob / 1000).format("DD/MM/YYYY"),
   },
 ];

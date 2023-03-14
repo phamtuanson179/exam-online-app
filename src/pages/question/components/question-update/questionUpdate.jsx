@@ -1,5 +1,4 @@
-import { EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Card, Form, message, Modal, Select } from "antd";
+import { Card, Form, Modal, Select, message } from "antd";
 import questionAPI from "apis/questionAPI";
 import { useEffect, useState } from "react";
 import {
@@ -18,8 +17,9 @@ const QuestionUpdate = ({
   setIsRefreshData,
   questionElement,
   isRefreshData,
+  isUpdateModalOpen,
+  setIsUpdateModalOpen,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [questionForm] = Form.useForm();
   const listQuestionTypeKeys = Object.keys(QUESTION_TYPE);
   const [questionType, setQuestionType] = useState("");
@@ -60,14 +60,7 @@ const QuestionUpdate = ({
         listCorrectAnswers: questionElement.listCorrectAnswers[0],
       });
     }
-  }, [isModalOpen]);
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
+  }, [isUpdateModalOpen]);
 
   const onChangeQuestionType = (value) => {
     setQuestionType(value);
@@ -116,7 +109,7 @@ const QuestionUpdate = ({
     await questionAPI.update({ id: questionElement?._id }, body).then((res) => {
       message.success("Cập nhật câu hỏi thành công!");
       setIsRefreshData(!isRefreshData);
-      setIsModalOpen(false);
+      setIsUpdateModalOpen(false);
     });
   };
 
@@ -134,14 +127,11 @@ const QuestionUpdate = ({
 
   return (
     <>
-      <Button type='warning' className='btn btn-warning' onClick={showModal}>
-        <EditOutlined />
-      </Button>
       <Modal
         getContainer={false}
         title='Cập nhật câu hỏi'
-        visible={isModalOpen}
-        onCancel={handleCancel}
+        visible={isUpdateModalOpen}
+        onCancel={() => setIsUpdateModalOpen(false)}
         okButtonProps={{
           htmlType: "submit",
           form: "questionUpdateForm",

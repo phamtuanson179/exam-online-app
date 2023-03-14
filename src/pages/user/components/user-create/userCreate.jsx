@@ -35,8 +35,8 @@ const UserCreate = () => {
 
   const onSubmit = (value) => {
     value.avatar = avatar;
-    value.dob = moment(value.dob).valueOf();
     dispatch(createUserThunk(value));
+    userForm.resetFields()
   };
 
   return (
@@ -62,11 +62,11 @@ const UserCreate = () => {
           labelAlign='left'
           id='userCreateForm'
         >
-          <UploadImage
+          {/* <UploadImage
             image={avatar}
             setImage={setAvatar}
             className='text-center mb-3'
-          />
+          /> */}
           <Form.Item
             label='Họ tên'
             name='fullname'
@@ -96,18 +96,6 @@ const UserCreate = () => {
             <Input placeholder={PLACEHOLDER.EMAIL} />
           </Form.Item>
           <Form.Item
-            label='Tên tài khoản'
-            name='username'
-            rules={[
-              {
-                required: true,
-                message: "Trường này bắt buộc!",
-              },
-            ]}
-          >
-            <Input placeholder={PLACEHOLDER.USERNAME} />
-          </Form.Item>
-          <Form.Item
             label='Vai trò'
             name='role'
             rules={[
@@ -128,20 +116,17 @@ const UserCreate = () => {
           <Form.Item
             label='Số điện thoại'
             name='phoneNumber'
-            rules={[
-              {
-                required: true,
-                message: "Trường này bắt buộc!",
-              },
-            ]}
+            // rules={[
+            //   {
+            //     required: true,
+            //     message: "Trường này bắt buộc!",
+            //   },
+            // ]}
           >
             <Input />
           </Form.Item>
           <Form.Item label='Địa chỉ' name='address'>
             <Input placeholder={PLACEHOLDER.ADDRESS} />
-          </Form.Item>
-          <Form.Item label='Ngày sinh' name='dob'>
-            <DatePicker placeholder={PLACEHOLDER.DOB} />
           </Form.Item>
         </Form>
       </Modal>

@@ -1,10 +1,8 @@
-import { EditOutlined } from "@ant-design/icons";
-import { Button, DatePicker, Form, Input, Modal, Select } from "antd";
+import { DatePicker, Form, Input, Modal, Select } from "antd";
 import examAPI from "apis/examAPI";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import { PLACEHOLDER } from "../../../../constants/configs";
-import { QUESTION_TYPE } from "../../../../constants/types";
 
 const { Option } = Select;
 
@@ -13,29 +11,23 @@ const ExamUpdate = ({
   setIsRefreshData,
   examElement,
   isRefreshData,
+  isUpdateModalOpen,
+  setIsUpdateModalOpen,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [examForm] = Form.useForm();
 
   useEffect(() => {
-    examForm.setFieldsValue({
-      subjectId: examElement.subjectId,
-      name: examElement.name,
-      amountQuestion: examElement.amountQuestion,
-      time: examElement.time,
-      openTime: moment(examElement?.openTime),
-      closeTime: moment(examElement?.closeTime),
-      minCorrectAnswerToPass: examElement?.minCorrectAnswerToPass,
-    });
-  }, []);
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
+    if (isUpdateModalOpen)
+      examForm.setFieldsValue({
+        subjectId: examElement.subjectId,
+        name: examElement.name,
+        amountQuestion: examElement.amountQuestion,
+        time: examElement.time,
+        openTime: moment(examElement?.openTime),
+        closeTime: moment(examElement?.closeTime),
+        minCorrectAnswerToPass: examElement?.minCorrectAnswerToPass,
+      });
+  }, [isUpdateModalOpen]);
 
   const onSubmit = async (value) => {
     let body = {
@@ -46,20 +38,17 @@ const ExamUpdate = ({
     await examAPI.update({ id: examElement._id }, body).then((res) => {
       examForm.resetFields();
       setIsRefreshData(!isRefreshData);
-      setIsModalOpen(false);
+      setIsUpdateModalOpen(false);
     });
   };
 
   return (
     <>
-      <Button type='warning' className='btn btn-warning' onClick={showModal}>
-        <EditOutlined />
-      </Button>
       <Modal
         getContainer={false}
         title='Cập nhật đề thi'
-        visible={isModalOpen}
-        onCancel={handleCancel}
+        visible={isUpdateModalOpen}
+        onCancel={() => setIsUpdateModalOpen(false)}
         width={1000}
         okButtonProps={{
           htmlType: "submit",

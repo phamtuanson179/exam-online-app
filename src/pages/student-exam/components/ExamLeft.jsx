@@ -37,7 +37,7 @@ const ExamLeft = () => {
   const renderListExam = () => {
     return infoExam.listQuestions.map((exam, index) => {
       return (
-        <div className='col-2'>
+        <div className='text-center'>
           <button
             className={`btn ${
               infoExam.curQuestionIndex === index ? "btn-warning text-light" : infoExam.listUserAnswers[index] && infoExam.listUserAnswers[index]?.length > 0 ? 'btn-primary text-light':''
@@ -66,7 +66,7 @@ const ExamLeft = () => {
   return (
     <>
       <Card title='Danh sách câu hỏi' extra={renderExtra()}>
-        <div className='row justify-content-between flex-wrap'>
+        <div  style={{display:'grid', gridTemplateColumns:'auto auto auto auto auto', justifyItems:'center', gap:'0.5rem' }}>
           {infoExam ? renderListExam() : ""}
         </div>
       </Card>
@@ -74,3 +74,5 @@ const ExamLeft = () => {
   );
 };
 export default ExamLeft;
+
+// className='row justify-content-between flex-wrap'

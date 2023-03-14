@@ -4,11 +4,14 @@ export const convertDate = (timestamp) => {
 };
 
 export const convertSecondToTime = (seconds) => {
-  var hours = Math.floor(seconds / 3600);
-  var minutes = Math.floor(seconds / 60);
-  var tinySeconds = seconds % 60;
-  return [hours, minutes, tinySeconds]
-    .map((item) => (item < 10 ? `0${item}` : item))
-    .filter((item, index) => item !== "00" || index > 0)
-    .join(":");
+  if (seconds) {
+    var hours = Math.floor(seconds / 3600);
+    var minutes = Math.floor(seconds / 60);
+    var tinySeconds = seconds % 60;
+    return [hours, minutes, tinySeconds]
+      .map((item) => (item < 10 ? `0${item}` : item))
+      .filter((item, index) => item !== "00" || index > 0)
+      .join(":");
+  }
+  return "---";
 };

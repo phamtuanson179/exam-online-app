@@ -1,1 +1,14 @@
 @import "./baseComponents/index.scss";
+
+.ant-card-head-title {
+  overflow:visible;
+  white-space:normal;
+  text-overflow: unset;
+}
+.ant-input-password{
+  height: 40px;
+  border-radius: 6px;
+  input {
+    height: auto;
+  }
+}

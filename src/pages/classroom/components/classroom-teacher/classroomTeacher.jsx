@@ -1,6 +1,7 @@
 import { ProfileOutlined, UserOutlined } from "@ant-design/icons";
 import { Alert, Button, Form, message, Modal, Select, Table } from "antd";
 import classroomAPI from "apis/classroomAPI";
+import { ROLE } from "constants/types";
 import moment from "moment";
 import { useEffect, useState } from "react";
 
@@ -11,9 +12,11 @@ const ClassroomTeacher = ({
   isRefreshData,
   classroomElement,
   listTeachers,
+  isTeacherModalOpen,
+  setIsTeacherModalOpen,
+  currentUser
 }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const onSelectChange = (newSelectedRowKeys) => {
     if (newSelectedRowKeys) {
@@ -27,8 +30,8 @@ const ClassroomTeacher = ({
   };
 
   useEffect(() => {
-    if (isModalOpen) getListTeacherOfClassroom();
-  }, [isModalOpen]);
+    if (isTeacherModalOpen) getListTeacherOfClassroom();
+  }, [isTeacherModalOpen]);
 
   const getListTeacherOfClassroom = async () => {
     await classroomAPI
@@ -41,14 +44,6 @@ const ClassroomTeacher = ({
       });
   };
 
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
   const onSubmit = async (value) => {
     await classroomAPI
       .updateTeacherOfClassroom(
@@ -58,21 +53,21 @@ const ClassroomTeacher = ({
       .then((res) => {
         message.success("Cập nhật danh sách giáo viên thành công!");
         setIsRefreshData(!isRefreshData);
-        setIsModalOpen(false);
+        setIsTeacherModalOpen(false);
       });
   };
 
   return (
     <>
-      <Button type='primary' className='btn btn-info' onClick={showModal}>
-        <UserOutlined />
-      </Button>
       <Modal
         getContainer={false}
         title='Danh sách giáo viên'
-        visible={isModalOpen}
-        onCancel={handleCancel}
-        onOk={onSubmit}
+        visible={isTeacherModalOpen}
+        onCancel={()=> setIsTeacherModalOpen(false)}
+        onOk={() => {
+          if (currentUser?.role === ROLE.ADMIN.code) onSubmit();
+          else message.warning("Bạn không có quyền với hành động này!");
+        }}
         width={1000}
       >
         <Form
@@ -114,9 +109,5 @@ const column = [
   {
     title: "Số điện thoại",
     dataIndex: "phoneNumber",
-  },
-  {
-    title: "Ngày sinh",
-    render: (record) => moment.unix(record?.dob / 1000).format("DD/MM/YYYY"),
   },
 ];

@@ -42,25 +42,13 @@ const ExamQuestion = ({
   }, []);
 
   useEffect(() => {
-    if (isModalOpen) getQuestionOfExam();
+    if (isModalOpen) {
+      setIsRandomInAll(examElement?.isRandomInAll);
+      if (!examElement?.isRandomInAll) getQuestionOfExam();
+    }
   }, [isModalOpen]);
 
-  // useEffect(() => {
-  //   console.log({ examElement, isRandomInAll });
-  //   if (!isRandomInAll) renderListQuestionOfExam();
-  // }, [isRandomInAll, examElement]);
   useEffect(() => {}, [isRandomInAll]);
-
-  // const renderListQuestionOfExam = () => {
-  //   console.log(examElement, examElement.listQuestions);
-  //   if (examElement.listQuestions?.length > 0) {
-  //     const listQuestionIds = examElement.listQuestions?.map(
-  //       (question) => question._id
-  //     );
-  //     console.log({ listQuestionIds });
-  //     onSelectChange(listQuestionIds);
-  //   }
-  // };
 
   const getQuestionOfExam = async (exam) => {
     await examAPI
@@ -68,12 +56,7 @@ const ExamQuestion = ({
         examId: examElement._id,
       })
       .then((res) => {
-        console.log({ res });
-
-        const listTeacherIdOfClassrooms = res.data.map(
-          (item) => item.questionId
-        );
-        onSelectChange(listTeacherIdOfClassrooms);
+        onSelectChange(res.data);
       });
   };
 
@@ -91,7 +74,7 @@ const ExamQuestion = ({
   };
 
   const onSubmit = async (value) => {
-    if (selectedRowKeys.length < examElement.amountQuestion) {
+    if (!isRandomInAll && selectedRowKeys.length < examElement.amountQuestion) {
       message.warning(
         "Số câu hỏi được chọn cần lớn hơn hoặc bằng số câu hỏi của đề thi!"
       );
@@ -99,7 +82,10 @@ const ExamQuestion = ({
     }
 
     const { listQuestions, ...originExam } = examElement;
-    await examAPI.update({ ...originExam, isRandomInAll: isRandomInAll });
+    await examAPI.update(
+      { id: examElement?._id },
+      { ...originExam, isRandomInAll: isRandomInAll }
+    );
 
     if (!isRandomInAll) {
       await examAPI.updateQuestionOfExam(
@@ -111,7 +97,7 @@ const ExamQuestion = ({
         { examId: examElement._id },
         { listQuestionIds: [] }
       );
-
+    message.success("Chỉnh sửa đề thi thành công!");
     setSelectedRowKeys([]);
     setListQuestionsOfSelectedSubject([]);
     setIsRefreshData(!isRefreshData);
@@ -119,7 +105,6 @@ const ExamQuestion = ({
   };
 
   const filterListQuestionBySubject = () => {
-    console.log({ listQuestions });
     const listQuestionsOfSelectedSubject = listQuestions
       .filter((question) => question.subjectId == examElement.subjectId)
       .map((question) => {
@@ -168,7 +153,10 @@ const ExamQuestion = ({
             />
           </Form.Item>
           <Form.Item label='Lấy ngẫu nhiên trong ngân hàng câu hỏi'>
-            <Checkbox onChange={onChangeIsRandomInAll}></Checkbox>
+            <Checkbox
+              checked={isRandomInAll}
+              onChange={onChangeIsRandomInAll}
+            ></Checkbox>
           </Form.Item>
 
           {!isRandomInAll ? (

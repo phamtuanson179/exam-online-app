@@ -16,9 +16,7 @@ const NoTestAmount = ({ classroomId, examId }) => {
     await reportAPI
       .getNoTestAmount({ classroomId: classroomId, examId: examId })
       .then((res) => {
-        if (res?.data) {
-          setAmount(res?.data);
-        }
+        setAmount(res?.data);
       });
   };
   return (

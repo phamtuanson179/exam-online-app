@@ -22,7 +22,6 @@ const SubjectTeacher = ({
   };
 
   const onSelectChange = (newSelectedUserIds) => {
-    console.log({ newSelectedUserIds });
     setSelectedUserIds(newSelectedUserIds);
   };
 
@@ -104,9 +103,4 @@ const teacherTableColumn = [
     key: "address",
   },
   { title: "Email", dataIndex: "email", key: "email" },
-  {
-    title: "Ngày sinh",
-    render: (record) => convertDate(record.dob),
-    key: "dob",
-  },
 ];

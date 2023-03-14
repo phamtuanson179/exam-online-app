@@ -1,53 +1,70 @@
-import { Button, Card, Space, Table, Upload, message } from "antd";
-import React, { useEffect, useState } from "react";
+import { EditOutlined } from "@ant-design/icons";
+import { Button, Card, Space, Table } from "antd";
+import { ROLE } from "constants/types";
+import { getAllUserThunk } from "pages/user/redux/userThunks";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { listUsersSelector } from "../../../../redux/selectors";
 import { convertDate } from "../../../../utils/time";
-import { getAllUserThunk } from "pages/user/redux/userThunks";
+import UserCreate from "../user-create/userCreate";
 import UserDelete from "../user-delete/userDelete";
 import UserUpdate from "../user-update/userUpdate";
-import UserCreate from "../user-create/userCreate";
-import { ROLE } from "constants/types";
-import { UploadOutlined } from "@ant-design/icons";
-import userAPI from "apis/userAPI";
+import UserUploadData from "../user-upload-data/userUploadData";
 
 const UserView = () => {
   const user = useSelector(listUsersSelector);
-  const [file, setFile] = useState();
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [modifiedElement, setModifiedElement] = useState();
+
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getAllUserThunk());
   }, []);
 
-  const createBatchUsers = async (event) => {
-    console.log(event.target.files[0]);
-    const value = event.target.files[0];
-    setFile(event.target.value);
-    const formData = new FormData();
-    formData.append("file", value);
-    await userAPI
-      .createBatch(formData)
-      .then((res) => {
-        message.success("Thêm người dùng thành công!");
-        dispatch(getAllUserThunk());
-      })
-      .finally(() => setFile(""));
-  };
+  const columns = [
+    {
+      title: "Họ tên",
+      dataIndex: "fullname",
+      fixed: "left",
+      width: 100,
+    },
+    {
+      title: "Địa chỉ",
+      dataIndex: "address",
+    },
+    { title: "Email", dataIndex: "email", key: 3 },
+    {
+      title: "Vai trò",
+      key: 4,
+      render: (record) => ROLE[record.role].meaning,
+    },
+    // { title: "Tên đăng nhập", dataIndex: "username", key: 5 },
+    {
+      title: "",
+      fixed: "right",
+      width: 100,
+      render: (record) => (
+        <Space size='middle' key={record}>
+          <Button
+            type='warning'
+            className='btn btn-warning'
+            onClick={() => {
+              setModifiedElement(record);
+              setIsUpdateModalOpen(true);
+            }}
+          >
+            <EditOutlined />
+          </Button>
+          <UserDelete userElement={record} />
+        </Space>
+      ),
+    },
+  ];
 
   const renderExtra = () => {
     return (
       <div className='d-flex justify-content-center align-items-center gap-2'>
-        <label for='upload-photo' className='btn btn-primary'>
-          <UploadOutlined />
-        </label>
-        <input
-          type='file'
-          name='photo'
-          id='upload-photo'
-          value={file}
-          style={{ opacity: 0, position: "absolute", zIndex: -1 }}
-          onChange={createBatchUsers}
-        />
+        <UserUploadData />
         <UserCreate />
       </div>
     );
@@ -56,41 +73,20 @@ const UserView = () => {
   return (
     <Card title='Danh sách tài khoản' extra={renderExtra()}>
       {user.loading ? null : (
-        <Table columns={columns} dataSource={user.listUsers} key='' />
+        <Table
+          columns={columns}
+          dataSource={user.listUsers}
+          scroll={{
+            x: true,
+          }}
+        />
       )}
+      <UserUpdate
+        userElement={modifiedElement}
+        setIsUpdateModalOpen={setIsUpdateModalOpen}
+        isUpdateModalOpen={isUpdateModalOpen}
+      />
     </Card>
   );
 };
 export default UserView;
-
-const columns = [
-  {
-    title: "Họ tên",
-    dataIndex: "fullname",
-  },
-  {
-    title: "Địa chỉ",
-    dataIndex: "address",
-  },
-  { title: "Email", dataIndex: "email", key: 3 },
-  {
-    title: "Ngày sinh",
-    key: 4,
-    render: (record) => convertDate(record.dob),
-  },
-  {
-    title: "Vai trò",
-    key: 4,
-    render: (record) => ROLE[record.role].meaning,
-  },
-  { title: "Tên đăng nhập", dataIndex: "username", key: 5 },
-  {
-    title: "",
-    render: (record) => (
-      <Space size='middle' key={record}>
-        <UserUpdate userElement={record} />
-        <UserDelete userElement={record} />
-      </Space>
-    ),
-  },
-];

@@ -16,9 +16,7 @@ const TestedAmount = ({ classroomId, examId }) => {
     await reportAPI
       .getTestedAmount({ classroomId: classroomId, examId: examId })
       .then((res) => {
-        if (res?.data) {
-          setAmount(res?.data);
-        }
+        setAmount(res?.data);
       });
   };
   return (

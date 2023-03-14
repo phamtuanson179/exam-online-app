@@ -1,19 +1,13 @@
-import { EditOutlined } from "@ant-design/icons";
 import {
-  Alert,
-  Button,
   Form,
   Input,
   message,
   Modal,
-  Select,
-  Table,
+  Select
 } from "antd";
 import classroomAPI from "apis/classroomAPI";
-import examAPI from "apis/examAPI";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { PLACEHOLDER } from "../../../../constants/configs";
-import { QUESTION_TYPE } from "../../../../constants/types";
 
 const { Option } = Select;
 
@@ -22,25 +16,18 @@ const ClassroomUpdate = ({
   setIsRefreshData,
   isRefreshData,
   classroomElement,
+  isUpdateModalOpen,
+  setIsUpdateModalOpen,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [classroomForm] = Form.useForm();
 
   useEffect(() => {
-    if (isModalOpen)
+    if (isUpdateModalOpen)
       classroomForm.setFieldsValue({
         subjectId: classroomElement?.subjectId,
         name: classroomElement?.name,
       });
-  }, [isModalOpen]);
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
+  }, [isUpdateModalOpen]);
 
   const onSubmit = async (value) => {
     let body = value;
@@ -50,20 +37,17 @@ const ClassroomUpdate = ({
         message.success("Chỉnh sửa lớp học thành công!");
         classroomForm.resetFields();
         setIsRefreshData(!isRefreshData);
-        setIsModalOpen(false);
+        setIsUpdateModalOpen(false);
       });
   };
 
   return (
     <>
-      <Button type='primary' className='btn btn-warning' onClick={showModal}>
-        <EditOutlined />
-      </Button>
       <Modal
         getContainer={false}
         title='Cập nhật lớp học'
-        visible={isModalOpen}
-        onCancel={handleCancel}
+        visible={isUpdateModalOpen}
+        onCancel={() => setIsUpdateModalOpen(false)}
         okButtonProps={{
           htmlType: "submit",
           form: "classroomUpdateForm",

@@ -1,5 +1,9 @@
-import { CheckCircleOutlined, InfoCircleOutlined } from "@ant-design/icons";
-import { Card, Select, Space, Table } from "antd";
+import {
+  CheckCircleOutlined,
+  EditOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons";
+import { Button, Card, Select, Space, Table, Tooltip } from "antd";
 import questionAPI from "apis/questionAPI";
 import subjectAPI from "apis/subjectAPI";
 import { QUESTION_TYPE } from "constants/types";
@@ -17,16 +21,25 @@ const QuestionView = () => {
   const [isLoading, setIsLoading] = useState(true);
   const listQuestionTypeKeys = Object.keys(QUESTION_TYPE);
   const [isRefreshData, setIsRefreshData] = useState(false);
+  const [modifiedElement, setModifiedElement] = useState();
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   const columns = [
     {
       title: "Nội dung",
       dataIndex: "content",
       key: "content",
+      fixed: "left",
+      render: (content) => (
+        <Tooltip placement='topLeft' title={content}>
+          <div style={{maxWidth: '16rem', whiteSpace:'nowrap', overflow:'hidden', textOverflow:"ellipsis"}}> {content}</div>
+        </Tooltip>
+      ),
     },
+
     {
       title: "Câu trả lời đúng",
-      render: (record) => record.listCorrectAnswers?.join(","),
+      render: (record) => <>{record.listCorrectAnswers.map(item=><div>{item}</div>)}</>,
       key: "listCorrectAnswers",
     },
     {
@@ -36,15 +49,21 @@ const QuestionView = () => {
     },
     {
       title: "",
+      fixed: "right",
+      width: 100,
       key: "action",
       render: (record) => (
         <Space size='middle' key={record}>
-          <QuestionUpdate
-            questionElement={record}
-            listSubjects={listSubjects}
-            setIsRefreshData={setIsRefreshData}
-            isRefreshData={isRefreshData}
-          />
+          <Button
+            type='warning'
+            className='btn btn-warning'
+            onClick={() => {
+              setModifiedElement(record);
+              setIsUpdateModalOpen(true);
+            }}
+          >
+            <EditOutlined />
+          </Button>
           <QuestionDelete
             questionElement={record}
             setIsRefreshData={setIsRefreshData}
@@ -65,9 +84,9 @@ const QuestionView = () => {
 
   const getAllSubjects = async () => {
     await subjectAPI.get().then((res) => {
-      if(res?.data?.length> 0 ){
-         setListSubjects(res.data);
-         setSubjectIdFilter(res.data?.[0]?._id)
+      if (res?.data?.length > 0) {
+        setListSubjects(res.data);
+        setSubjectIdFilter(res.data?.[0]?._id);
       }
     });
   };
@@ -114,7 +133,7 @@ const QuestionView = () => {
             onChange={handleChangeSubjectFilter}
             value={subjectIdFilter}
             options={listSubjects.map((subject) => ({
-              label: subject.name, 
+              label: subject.name,
               value: subject._id,
             }))}
           />
@@ -148,9 +167,9 @@ const QuestionView = () => {
         title: "Trạng thái",
         render: (answer) =>
           isCorrectAnswer(answer, record.listCorrectAnswers) ? (
-            <CheckCircleOutlined className='text-success fs-4' />
+            <CheckCircleOutlined className='text-success' />
           ) : (
-            <InfoCircleOutlined className='text-danger fs-4' />
+            <InfoCircleOutlined className='text-danger' />
           ),
       },
     ];
@@ -177,8 +196,17 @@ const QuestionView = () => {
               expandedRowRender: (record) => renderTableExpanded(record),
               defaultExpandedRowKeys: ["0"],
             }}
+            scroll={{ x: true }}
           />
         )}
+        <QuestionUpdate
+          questionElement={modifiedElement}
+          listSubjects={listSubjects}
+          setIsRefreshData={setIsRefreshData}
+          isRefreshData={isRefreshData}
+          isUpdateModalOpen={isUpdateModalOpen}
+          setIsUpdateModalOpen={setIsUpdateModalOpen}
+        />
       </Card>
     </>
   );

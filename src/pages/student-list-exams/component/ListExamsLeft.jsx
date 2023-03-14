@@ -6,7 +6,6 @@ const ListExamsLeft = ({ listExams, currentExam, setCurrentExam }) => {
       <button
         className={`btn w-100 ${currentExam?.index == index ? "btn-primary" : ""}`}
         onClick={(event) => {
-          console.log({ index });
           onClickExamButton(index);
         }}
       >
@@ -16,7 +15,6 @@ const ListExamsLeft = ({ listExams, currentExam, setCurrentExam }) => {
   };
 
   const onClickExamButton = (index) => {
-    console.log(listExams, index);
     setCurrentExam(listExams[index]);
   };
 

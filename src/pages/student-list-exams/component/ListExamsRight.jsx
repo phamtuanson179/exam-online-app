@@ -1,19 +1,18 @@
 import { Button, Card, Descriptions, Popconfirm } from "antd";
 import moment from "moment";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { convertSecondToTime } from "utils/time";
 
 const ListExamsRight = ({ currentExam, historyOfCurrentExam }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const startExam = () => {
-    localStorage.setItem("exam", JSON.stringify(currentExam));
-    history.push("exam");
+    navigate("/exam");
   };
 
   const isDisableStartExam = () => {
     const openTime = currentExam?.openTime;
     const closeTime = currentExam?.closeTime;
     const now = new Date().getTime();
-    console.log(historyOfCurrentExam, openTime, closeTime, now);
     if (historyOfCurrentExam || openTime > now || now > closeTime) {
       return true;
     } else return false;
@@ -24,12 +23,12 @@ const ListExamsRight = ({ currentExam, historyOfCurrentExam }) => {
       <Card title='Chi tiết bài thi' className='mb-4'>
         {currentExam ? (
           <>
-            <Descriptions bordered column={12} className='mb-4'>
+            <Descriptions bordered column={{ xs: 24, lg: 12}} >
               <Descriptions.Item label='Tên môn học' span={6}>
                 {currentExam?.name}
               </Descriptions.Item>
               <Descriptions.Item label='Thời gian thi' span={6}>
-                {currentExam?.time} giây
+                {convertSecondToTime(currentExam?.time)} phút
               </Descriptions.Item>
               <Descriptions.Item label='Số câu hỏi' span={6}>
                 {currentExam?.amountQuestion}
@@ -56,14 +55,14 @@ const ListExamsRight = ({ currentExam, historyOfCurrentExam }) => {
 
       {historyOfCurrentExam && (
         <Card title='Lịch sử thi'>
-          <Descriptions bordered column={12}>
+          <Descriptions bordered column={{ xs: 24, lg: 12}}>
             <Descriptions.Item label='Thời gian nộp bài' span={6}>
               {moment(historyOfCurrentExam.createdAt).format(
                 "HH:mm:ss DD/mm/yyyy"
               )}
             </Descriptions.Item>
             <Descriptions.Item label='Thời gian làm bài' span={6}>
-              {historyOfCurrentExam?.time} giây
+              {convertSecondToTime(historyOfCurrentExam?.time)} phút
             </Descriptions.Item>
             <Descriptions.Item label='Số câu trả lời đúng' span={6}>
               {historyOfCurrentExam?.numberOfCorrectAnswer} /{" "}
@@ -76,19 +75,21 @@ const ListExamsRight = ({ currentExam, historyOfCurrentExam }) => {
         </Card>
       )}
 
-      <div className='mt-3 text-center'>
-        <Popconfirm
-          title={`Bạn sẽ có ${currentExam?.time} giây để hoàn thành bài thi!`}
-          onConfirm={startExam}
-          okText='Bắt đầu'
-          cancelText='Hủy'
-          disabled={isDisableStartExam()}
-        >
-          <Button type='primary' disabled={isDisableStartExam()}>
-            Vào thi
-          </Button>
-        </Popconfirm>
-      </div>
+      {currentExam && (
+        <div className='mt-3 text-center mb-5'>
+          <Popconfirm
+            title={`Bạn sẽ có ${convertSecondToTime(currentExam?.time)} phút để hoàn thành bài thi!`}
+            onConfirm={startExam}
+            okText='Bắt đầu'
+            cancelText='Hủy'
+            disabled={isDisableStartExam()}
+          >
+            <Button type='primary' disabled={isDisableStartExam()}>
+              Vào thi
+            </Button>
+          </Popconfirm>
+        </div>
+      )}
     </>
   );
 };

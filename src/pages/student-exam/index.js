@@ -1,2 +1,2 @@
-import Exam from "./components/Exam";
-export default Exam;
+import StudentExam from "./components/Exam"
+export default StudentExam;

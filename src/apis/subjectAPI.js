@@ -8,6 +8,11 @@ const subjectAPI = {
   create: (body) => {
     return axiosClient.post(subjectAPI.url, body);
   },
+  createBatch: (body) => {
+    return axiosClient.post(`${subjectAPI.url}/batch`, body, {
+      headers: { "Content-Type": "Multipart/formData" },
+    });
+  },
   update: (params, data) => {
     return axiosClient.put(subjectAPI.url, data, { params });
   },

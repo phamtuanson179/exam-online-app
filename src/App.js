@@ -1,38 +1,54 @@
 import "antd/dist/antd.min.css";
 import "bootstrap/dist/css/bootstrap.css";
-import { lazy } from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import StudentMain from "components/layout/StudentMain";
+import Classroom from "pages/classroom";
+import Exam from "pages/exam";
+import Question from "pages/question";
+import Result from "pages/result";
+import SignIn from "pages/sign-in";
+import StudentExam from "pages/student-exam";
+import ListExams from "pages/student-list-exams";
+import Subject from "pages/subject";
+import User from "pages/user";
+import { Route, Routes } from "react-router-dom";
+import ProtectedRouter from "utils/ProtectedRouter";
 import Main from "./components/layout/Main";
+import Dashboard from "./pages/dashboard";
 import "./styles/customs/style.scss";
 import "./styles/main.scss";
 import "./styles/responsive.scss";
-import StudentMain from "components/layout/StudentMain";
-
-const User = lazy(() => import("pages/user"));
-const Subject = lazy(() => import("pages/subject"));
-const Classroom = lazy(() => import("pages/classroom"));
-const Question = lazy(() => import("pages/question"));
-const Exam = lazy(() => import("pages/exam"));
-const Result = lazy(() => import("pages/result"));
-const Dashboard = lazy(() => import("./pages/dashboard"));
-const SignIn = lazy(() => import("./pages/sign-in"));
-const SignUp = lazy(() => import("./pages/SignUp.jsx"));
-const StudentListExams = lazy(() => import("pages/student-list-exams/index"));
-const StudentExam = lazy(() => import("pages/student-exam/index"));
 
 function App() {
   return (
     <div className='App'>
-      <Switch>
+      <Routes>
+        <Route path='sign-in' element={<SignIn />} />
+
+        <Route element={<ProtectedRouter />}>
+          <Route path='manager' element={<Main />}>
+            <Route path='dashboard' element={<Dashboard />} />
+            <Route path='user' element={<User />} />
+            <Route path='subject' element={<Subject />} />
+            <Route path='classroom' element={<Classroom />} />
+            <Route path='question' element={<Question />} />
+            <Route path='exam' element={<Exam />} />
+            <Route path='result' element={<Result />} />
+          </Route>
+        </Route>
+        <Route element={<ProtectedRouter />}>
+          <Route path='exam' element={<StudentMain />}>
+            <Route path='list-exams' element={<ListExams />} />
+            <Route path='' element={<StudentExam />} />
+          </Route>
+        </Route>
+        <Route path='*' element={<SignIn />}></Route>
+      </Routes>
+      {/* <Switch>
         <Route exact path='/'>
           <Redirect to='/dashboard' />
         </Route>
         <Route path='/sign-in' component={SignIn} />
         <Route path='/sign-up' component={SignUp} />
-        <StudentMain>
-          <Route path='/student/list-exams' component={StudentListExams} />
-          <Route path='/student/exam' component={StudentExam} />
-        </StudentMain>
 
         <Main>
           <Route path='/dashboard' component={Dashboard} />
@@ -43,7 +59,12 @@ function App() {
           <Route path='/exam' component={Exam} />
           <Route path='/result' component={Result} />
         </Main>
-      </Switch>
+
+        <StudentMain>
+          <Route path='/student/list-exams' component={StudentListExams} />
+          <Route path='/student/exam' component={StudentExam} />
+        </StudentMain>
+      </Switch> */}
     </div>
   );
 }

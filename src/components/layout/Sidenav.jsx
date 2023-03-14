@@ -47,7 +47,7 @@ function Sidenav({ color }) {
         )}
         {currentUser?.role === ROLE.TEACHER.code && (
           <Menu.Item>
-            <NavLink to='/dashboard'>
+            <NavLink to='/manager/dashboard'>
               <span
                 className='icon'
                 style={{
@@ -69,7 +69,7 @@ function Sidenav({ color }) {
         )}
         {currentUser?.role === ROLE.ADMIN.code && (
           <Menu.Item>
-            <NavLink to='/user'>
+            <NavLink to='/manager/user'>
               <span
                 className='icon'
                 style={{
@@ -92,7 +92,7 @@ function Sidenav({ color }) {
           )}
         {currentUser?.role === ROLE.ADMIN.code && (
           <Menu.Item key='3'>
-            <NavLink to='/subject'>
+            <NavLink to='/manager/subject'>
               <span
                 className='icon'
                 style={{
@@ -108,7 +108,7 @@ function Sidenav({ color }) {
         {currentUser?.role === ROLE.ADMIN.code ||
         currentUser?.role === ROLE.TEACHER.code ? (
           <Menu.Item key='4'>
-            <NavLink to='/classroom'>
+            <NavLink to='/manager/classroom'>
               <span
                 className='icon'
                 style={{
@@ -130,7 +130,7 @@ function Sidenav({ color }) {
         )}
         {currentUser?.role === ROLE.TEACHER.code && (
           <Menu.Item >
-            <NavLink to='/question'>
+            <NavLink to='/manager/question'>
               <span
                 className='icon'
                 style={{
@@ -146,7 +146,7 @@ function Sidenav({ color }) {
 
         {currentUser?.role === ROLE.TEACHER.code && (
           <Menu.Item key='6'>
-            <NavLink to='/exam'>
+            <NavLink to='/manager/exam'>
               <span
                 className='icon'
                 style={{
@@ -168,7 +168,7 @@ function Sidenav({ color }) {
         )}
         {currentUser?.role === ROLE.TEACHER.code && (
           <Menu.Item key='6'>
-            <NavLink to='/result'>
+            <NavLink to='/manager/result'>
               <span
                 className='icon'
                 style={{

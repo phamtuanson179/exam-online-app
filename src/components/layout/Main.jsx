@@ -10,12 +10,12 @@
   * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { Layout, Drawer, Affix } from "antd";
-import Sidenav from "./Sidenav";
+import { Affix, Drawer, Layout } from "antd";
+import { useEffect, useState } from "react";
+import { Outlet, useLocation } from "react-router-dom";
+import logo from "../../assets/favicon.png";
 import Header from "./Header";
-import Footer from "./Footer";
+import Sidenav from "./Sidenav";
 
 const { Header: AntHeader, Content, Sider } = Layout;
 
@@ -94,7 +94,7 @@ function Main({ children }) {
       <Layout>
         {fixed ? (
           <Affix>
-            <AntHeader className={`${fixed ? "ant-header-fixed" : ""}`}>
+            <AntHeader className={`${fixed ? "ant-header-fixed" : ""} position-relative `}>
               <Header
                 onPress={openDrawer}
                 name={pathname}
@@ -104,10 +104,21 @@ function Main({ children }) {
                 handleFixedNavbar={handleFixedNavbar}
                 breadcrumbTitle={breadcrumbTitle}
               />
+              <div
+                className='brand position-absolute d-flex justify-content-start align-items-center d-lg-none'
+                style={{
+                  top: "50%",
+                  left: "2rem",
+                  transform: "translateY(-50%)",
+                }}
+              >
+                <img src={logo} height={30} alt='' />
+                <span className=' ms-3 fs-3 text-danger'>HUST</span>
+              </div>
             </AntHeader>
           </Affix>
         ) : (
-          <AntHeader className={`${fixed ? "ant-header-fixed" : ""}`}>
+          <AntHeader className={`${fixed ? "ant-header-fixed" : ""} position-relative `}>
             <Header
               onPress={openDrawer}
               name={pathname}
@@ -117,9 +128,22 @@ function Main({ children }) {
               handleFixedNavbar={handleFixedNavbar}
               breadcrumbTitle={breadcrumbTitle}
             />
+            <div
+              className='brand position-absolute d-flex justify-content-start align-items-center d-lg-none'
+              style={{
+                top: "50%",
+                left: "2rem",
+                transform: "translateY(-50%)",
+              }}
+            >
+              <img src={logo} height={30} alt='' />
+              <span className=' ms-3 fs-3 text-danger'>HUST</span>
+            </div>
           </AntHeader>
         )}
-        <Content className='content-ant'>{children}</Content>
+        <Content className='content-ant'>
+          <Outlet />
+        </Content>
       </Layout>
     </Layout>
   );

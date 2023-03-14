@@ -11,6 +11,11 @@ const classroomAPI = {
   create: (body) => {
     return axiosClient.post(classroomAPI.url, body);
   },
+  createBatch: (body) => {
+    return axiosClient.post(`${classroomAPI.url}/batch`, body, {
+      headers: { "Content-Type": "Multipart/formData" },
+    });
+  },
   update: (params, data) => {
     return axiosClient.put(classroomAPI.url, data, { params });
   },
@@ -26,7 +31,6 @@ const classroomAPI = {
     });
   },
   getTeacherOfClassroom: (params) => {
-    console.log({ params });
     return axiosClient.get(`${classroomAPI.url}/teacher-of-classroom`, {
       params,
     });

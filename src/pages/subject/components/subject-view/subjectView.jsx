@@ -1,28 +1,31 @@
-import { Card, Space, Table } from "antd";
+import { Button, Card, Space, Table } from "antd";
 import subjectAPI from "apis/subjectAPI";
-import userAPI from "apis/userAPI";
-import { ROLE } from "constants/types";
 import { useEffect, useState } from "react";
 import SubjectCreate from "../subject-create/subjectCreate";
 import SubjectDelete from "../subject-delete/subjectDelete";
-import SubjectTeacher from "../subject-teacher/subjectTeacher";
 import SubjectUpdate from "../subject-update/subjectUpdate";
+import SubjectUploadData from "../subject-upload-data/subjectUploadData";
+import { EditOutlined } from "@ant-design/icons";
 
 const SubjectView = () => {
   const [listSubjects, setListSubjects] = useState();
   const [isRefreshData, setIsRefreshData] = useState();
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [modifiedElement, setModifiedElement] = useState();
 
   const columns = [
     {
       title: "Tên môn học",
       dataIndex: "name",
       key: "name",
+      fixed: "left",
     },
-
+    { title: "Mã môn học", dataIndex: "alias", key: "alias" },
     { title: "Mô tả", dataIndex: "description", key: "description" },
     {
       title: "",
       key: "actions",
+      fixed: "right",
       render: (record) => (
         <Space size='middle' key={record}>
           {/* <SubjectTeacher
@@ -31,11 +34,17 @@ const SubjectView = () => {
             isRefeshData={isRefeshData}
             setIsRefeshData={setIsRefeshData}
           /> */}
-          <SubjectUpdate
-            subjectElement={record}
-            isRefreshData={isRefreshData}
-            setIsRefreshData={setIsRefreshData}
-          />
+          <Button
+            type='warning'
+            className='btn btn-warning'
+            onClick={() => {
+              setModifiedElement(record);
+              setIsUpdateModalOpen(true);
+            }}
+          >
+            <EditOutlined />
+          </Button>
+          
           <SubjectDelete
             subjectElement={record}
             isRefreshData={isRefreshData}
@@ -55,28 +64,6 @@ const SubjectView = () => {
     // getAllStudent();
   }, []);
 
-  // const getAllTeacher = async () => {
-  //   const params = {
-  //     filterString: `role==${ROLE.TEACHER.code}`,
-  //   };
-
-  //   await userAPI.get(params).then((res) => {
-  //     res.data.forEach((item) => (item.key = item._id));
-  //     setListTeachers(res.data);
-  //   });
-  // };
-
-  // const getAllStudent = async () => {
-  //   const params = {
-  //     filterString: `role==${ROLE.STUDENT.code}`,
-  //   };
-
-  //   await userAPI.get(params).then((res) => {
-  //     res.data.forEach((item) => (item.key = item._id));
-  //     setListStudents(res.data);
-  //   });
-  // };
-
   const getAllSubject = async () => {
     await subjectAPI.get().then((res) => {
       const listSubjects = res.data;
@@ -88,14 +75,29 @@ const SubjectView = () => {
     <Card
       title='Danh sách môn học'
       extra={
-        <SubjectCreate
-          isRefreshData={isRefreshData}
-          setIsRefreshData={setIsRefreshData}
-        />
+        <div className='d-flex justify-content-center align-items-center gap-2'>
+          <SubjectUploadData
+            isRefreshData={isRefreshData}
+            setIsRefreshData={setIsRefreshData}
+          />
+          <SubjectCreate />
+        </div>
       }
     >
-      {console.log({ listSubjects })}
-      <Table columns={columns} dataSource={listSubjects} rowKey='id' key='' />
+      <Table
+        columns={columns}
+        dataSource={listSubjects}
+        rowKey='id'
+        key=''
+        scroll={{ x: true }}
+      />
+      <SubjectUpdate
+            subjectElement={modifiedElement}
+            isUpdateModalOpen={isUpdateModalOpen}
+            setIsUpdateModalOpen={setIsUpdateModalOpen}
+            isRefreshData={isRefreshData}
+            setIsRefreshData={setIsRefreshData}
+          />
     </Card>
   );
 };

@@ -1,4 +1,4 @@
-import { Card, Select, Space, Table } from "antd";
+import { Button, Card, Select, Space, Table } from "antd";
 import classroomAPI from "apis/classroomAPI";
 import examAPI from "apis/examAPI";
 import subjectAPI from "apis/subjectAPI";
@@ -13,6 +13,13 @@ import ClassroomStudent from "../classroom-student/classroomStudent";
 import ClassroomTeacher from "../classroom-teacher/classroomTeacher";
 import ClassroomUpdate from "../classroom-update/classroomUpdate";
 import { ROLE } from "constants/types";
+import ClassroomUploadData from "../classroom-upload-data/classroomUploadData";
+import {
+  EditOutlined,
+  SolutionOutlined,
+  TeamOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 
 const ClassroomView = () => {
   const [listSubjects, setListSubjects] = useState([]);
@@ -23,11 +30,18 @@ const ClassroomView = () => {
   const [subjectIdFilter, setSubjectIdFilter] = useState("");
   const [isRefreshData, setIsRefreshData] = useState(false);
   const [currentUser, setCurrentUser] = useState();
+  const [modifiedElement, setModifiedElement] = useState();
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState();
+  const [isStudentModalOpen, setIsStudentModalOpen] = useState();
+  const [isTeacherModalOpen, setIsTeacherModalOpen] = useState();
+  const [isExamModalOpen, setIsExamModalOpen] = useState();
   const columns = [
     {
       title: "Tên lớp hợc",
       dataIndex: "name",
       key: "content",
+      fixed: "left",
+      width: 100,
     },
     {
       title: "Môn học",
@@ -36,40 +50,60 @@ const ClassroomView = () => {
     },
     {
       title: "",
+      fixed: "right",
       key: "actions",
+      width: 100,
       render: (record) => (
         <Space size='middle' key={record}>
           {currentUser?.role === ROLE.TEACHER.code && (
-            <ClassroomExam
-              classroomElement={record}
-              isRefreshData={isRefreshData}
-              setIsRefreshData={setIsRefreshData}
-              listExams={listExams}
-            />
+            <Button
+              type='primary'
+              className='btn btn-info'
+              onClick={() => {
+                setModifiedElement(record);
+                setIsExamModalOpen(true);
+              }}
+            >
+              <SolutionOutlined />
+            </Button>
+          )}
+          {(currentUser?.role === ROLE.ADMIN.code ||
+            currentUser?.role === ROLE.TEACHER.code) && (
+            <Button
+              type='primary'
+              className='btn btn-info'
+              onClick={() => {
+                setModifiedElement(record);
+                setIsStudentModalOpen(true);
+              }}
+            >
+              <TeamOutlined />
+            </Button>
+          )}
+          {(currentUser?.role === ROLE.ADMIN.code ||
+            currentUser?.role === ROLE.TEACHER.code) && (
+            <Button
+              type='primary'
+              className='btn btn-info'
+              onClick={() => {
+                setModifiedElement(record);
+                setIsTeacherModalOpen(true);
+              }}
+            >
+              <UserOutlined />
+            </Button>
           )}
           {currentUser?.role === ROLE.ADMIN.code && (
-            <ClassroomStudent
-              classroomElement={record}
-              isRefreshData={isRefreshData}
-              setIsRefreshData={setIsRefreshData}
-              listStudents={listStudents}
-            />
-          )}
-          {currentUser?.role === ROLE.ADMIN.code && (
-            <ClassroomTeacher
-              classroomElement={record}
-              isRefreshData={isRefreshData}
-              setIsRefreshData={setIsRefreshData}
-              listTeachers={listTeachers}
-            />
-          )}
-          {currentUser?.role === ROLE.ADMIN.code && (
-            <ClassroomUpdate
-              classroomElement={record}
-              listSubjects={listSubjects}
-              isRefreshData={isRefreshData}
-              setIsRefreshData={setIsRefreshData}
-            />
+            <Button
+              type='primary'
+              className='btn btn-warning'
+              onClick={() => {
+                setModifiedElement(record);
+                setIsUpdateModalOpen(true);
+              }}
+            >
+              <EditOutlined />
+            </Button>
           )}
           {currentUser?.role === ROLE.ADMIN.code && (
             <ClassroomDelete
@@ -98,14 +132,14 @@ const ClassroomView = () => {
   }, []);
 
   useEffect(() => {
-    getAllClassroom();
-  }, [isRefreshData, subjectIdFilter]);
+    if (listSubjects?.length > 0) getAllClassroom();
+  }, [isRefreshData, subjectIdFilter, listSubjects]);
 
   const getAllSubjects = async () => {
     await subjectAPI.get().then((res) => {
       if (res.data?.length > 0) {
         setListSubjects(res.data);
-        setSubjectIdFilter(res.data?.[0]?._id);
+        // setSubjectIdFilter(res.data?.[0]?._id);
         // setIsRefreshData(!isRefreshData);
       }
     });
@@ -142,7 +176,6 @@ const ClassroomView = () => {
   };
 
   const getAllClassroom = async () => {
-    console.log(subjectIdFilter);
     const filterString = convertToFilterString([
       { key: "subjectId", operator: "==", value: subjectIdFilter },
     ]);
@@ -166,7 +199,6 @@ const ClassroomView = () => {
   };
 
   const handleChangeSubjectFilter = (value) => {
-    console.log({ value });
     setSubjectIdFilter(value || "");
     setIsRefreshData(!isRefreshData);
   };
@@ -190,6 +222,11 @@ const ClassroomView = () => {
             }))}
           />
 
+          <ClassroomUploadData
+            setIsRefreshData={setIsRefreshData}
+            isRefreshData={isRefreshData}
+          />
+
           <ClassroomCreate
             listSubjects={listSubjects}
             setIsRefreshData={setIsRefreshData}
@@ -203,7 +240,45 @@ const ClassroomView = () => {
   return (
     <>
       <Card title='Danh sách lớp' extra={renderTableExtra()}>
-        <Table columns={columns} dataSource={listClassrooms} />
+        <Table
+          columns={columns}
+          dataSource={listClassrooms}
+          scroll={{ x: true }}
+        />
+        <ClassroomExam
+          classroomElement={modifiedElement}
+          isExamModalOpen={isExamModalOpen}
+          setIsExamModalOpen={setIsExamModalOpen}
+          isRefreshData={isRefreshData}
+          setIsRefreshData={setIsRefreshData}
+          listExams={listExams}
+        />
+        <ClassroomTeacher
+          classroomElement={modifiedElement}
+          isRefreshData={isRefreshData}
+          setIsRefreshData={setIsRefreshData}
+          listTeachers={listTeachers}
+          isTeacherModalOpen={isTeacherModalOpen}
+          setIsTeacherModalOpen={setIsTeacherModalOpen}
+          currentUser={currentUser}
+        />
+        <ClassroomStudent
+          classroomElement={modifiedElement}
+          isRefreshData={isRefreshData}
+          setIsRefreshData={setIsRefreshData}
+          listStudents={listStudents}
+          isStudentModalOpen={isStudentModalOpen}
+          setIsStudentModalOpen={setIsStudentModalOpen}
+          currentUser={currentUser}
+        />
+        <ClassroomUpdate
+          classroomElement={modifiedElement}
+          listSubjects={listSubjects}
+          isRefreshData={isRefreshData}
+          setIsRefreshData={setIsRefreshData}
+          isUpdateModalOpen={isUpdateModalOpen}
+          setIsUpdateModalOpen={setIsUpdateModalOpen}
+        />
       </Card>
     </>
   );

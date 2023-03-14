@@ -9,11 +9,12 @@ const ClassroomExam = ({
   isRefreshData,
   classroomElement,
   listExams,
+  isExamModalOpen,
+  setIsExamModalOpen,
 }) => {
   const [listExamInSubjectOfClassrooms, setListExamInSubjectOfClassrooms] =
     useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const onSelectChange = (newSelectedRowKeys) => {
     if (newSelectedRowKeys) {
@@ -27,14 +28,13 @@ const ClassroomExam = ({
   };
 
   useEffect(() => {
-    if (isModalOpen) {
+    if (isExamModalOpen) {
       getListExamOfClassroom();
       filterExamInSubjectOfClassroom();
     }
-  }, [isModalOpen]);
+  }, [isExamModalOpen]);
 
   const filterExamInSubjectOfClassroom = () => {
-    console.log({ listExams });
     const listExamInSubjectOfClassrooms = listExams.filter(
       (item) => item?.subjectId == classroomElement?.subjectId
     );
@@ -48,18 +48,9 @@ const ClassroomExam = ({
         classroomId: classroomElement._id,
       })
       .then((res) => {
-        console.log({ res });
         const listExamIdOfClassrooms = res.data.map((item) => item.examId);
         onSelectChange(listExamIdOfClassrooms);
       });
-  };
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
   };
 
   const onSubmit = async (value) => {
@@ -71,20 +62,17 @@ const ClassroomExam = ({
       .then((res) => {
         message.success("Cập nhật danh sách đề thi thành công!");
         setIsRefreshData(!isRefreshData);
-        setIsModalOpen(false);
+        setIsExamModalOpen(false);
       });
   };
 
   return (
     <>
-      <Button type='primary' className='btn btn-info' onClick={showModal}>
-        <SolutionOutlined />
-      </Button>
       <Modal
         getContainer={false}
         title='Danh sách đề thi'
-        visible={isModalOpen}
-        onCancel={handleCancel}
+        visible={isExamModalOpen}
+        onCancel={() => setIsExamModalOpen(false)}
         onOk={onSubmit}
         width={1000}
       >

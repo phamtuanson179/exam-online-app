@@ -4,7 +4,7 @@ import {
   CategoryScale,
   Chart as ChartJS,
   Legend,
-  LineElement,
+  BarElement,
   LinearScale,
   PointElement,
   Title,
@@ -12,14 +12,14 @@ import {
 } from "chart.js";
 import { SPECTRUM_CHART_TYPE } from "constants/types";
 import { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import { caculateScore } from "utils/common";
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
-  LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend
@@ -61,9 +61,7 @@ const SpectrumPoint = ({ classroomId, examId }) => {
     await reportAPI
       .getSpectrumPoint({ classroomId: classroomId, examId: examId })
       .then((res) => {
-        if (res.data) {
           setSpectrumPointData(res.data);
-        }
       });
   };
 
@@ -99,7 +97,6 @@ const SpectrumPoint = ({ classroomId, examId }) => {
             ?.length ?? 0
       );
 
-      console.log({listAllPoint, chartData})
 
       setChartData({
         labels: listAllPoint,
@@ -135,7 +132,7 @@ const SpectrumPoint = ({ classroomId, examId }) => {
           </div>
 
           <div className='col-12'>
-            {chartData && <Line options={options} data={chartData} />}
+            {chartData && <Bar options={options} data={chartData} />}
           </div>
         </div>
       </Card>

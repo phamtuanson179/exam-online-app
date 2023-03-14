@@ -7,13 +7,18 @@ import { PLACEHOLDER } from "../../../../constants/configs";
 
 const { TextArea } = Input;
 
-const SubjectUpdate = ({ subjectElement, isRefreshData, setIsRefreshData }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const SubjectUpdate = ({
+  subjectElement,
+  isRefreshData,
+  setIsRefreshData,
+  isUpdateModalOpen,
+  setIsUpdateModalOpen,
+}) => {
   const [image, setImage] = useState("");
   const [subjectForm] = Form.useForm();
 
   useEffect(() => {
-    if (isModalOpen) {
+    if (isUpdateModalOpen) {
       subjectForm.setFieldsValue({
         name: subjectElement.name,
         alias: subjectElement.alias,
@@ -21,15 +26,7 @@ const SubjectUpdate = ({ subjectElement, isRefreshData, setIsRefreshData }) => {
       });
       setImage(subjectElement?.image);
     }
-  }, [isModalOpen]);
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
+  }, [isUpdateModalOpen]);
 
   const onSubmit = async (value) => {
     value.image = image;
@@ -37,19 +34,16 @@ const SubjectUpdate = ({ subjectElement, isRefreshData, setIsRefreshData }) => {
     await subjectAPI.update({ id: subjectElement._id }, value).then((res) => {
       message.success("Cập nhật môn học thành công!");
       setIsRefreshData(!isRefreshData);
-      setIsModalOpen(false);
+      setIsUpdateModalOpen(false);
     });
   };
 
   return (
     <>
-      <Button type='warning' className='btn btn-warning' onClick={showModal}>
-        <EditOutlined />
-      </Button>
       <Modal
         title='Cập nhật môn học'
-        visible={isModalOpen}
-        onCancel={handleCancel}
+        visible={isUpdateModalOpen}
+        onCancel={() => setIsUpdateModalOpen(false)}
         getContainer={false}
         okButtonProps={{
           htmlType: "submit",
@@ -72,6 +66,18 @@ const SubjectUpdate = ({ subjectElement, isRefreshData, setIsRefreshData }) => {
           <Form.Item
             label='Tên môn học'
             name='name'
+            rules={[
+              {
+                required: true,
+                message: "Trường này bắt buộc!",
+              },
+            ]}
+          >
+            <Input placeholder={PLACEHOLDER.NAME} />
+          </Form.Item>
+          <Form.Item
+            label='Mã môn học'
+            name='alias'
             rules={[
               {
                 required: true,
